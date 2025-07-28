@@ -25,7 +25,7 @@ pl = pstar.plist([1, 2, 3])
 
 ____
 
-### [`pstar.defaultpdict(self, *a, **kw)`](./pstar_defaultpdict.md)
+### [`pstar.defaultpdict(*a, **kw)`](./pstar_defaultpdict.md)
 
 `defaultdict` subclass where everything is automatically a property.
 
@@ -83,7 +83,7 @@ Update `self`. **Returns `self` to allow chaining.**
 
 ____
 
-### [`pstar.frozenpset(frozenset)`](./pstar_frozenpset.md)
+### [`pstar.frozenpset(iterable=(), /)`](./pstar_frozenpset.md)
 
 Placeholder `frozenset` subclass. Mostly unimplemented.
 
@@ -93,7 +93,7 @@ Call the `qj` logging function with `self` as the value to be logged. All other 
 
 ____
 
-### [`pstar.pdict(self, *a, **kw)`](./pstar_pdict.md)
+### [`pstar.pdict(*a, **kw)`](./pstar_pdict.md)
 
 `dict` subclass where everything is automatically a property.
 
@@ -143,7 +143,7 @@ Update `self`. **Returns `self` to allow chaining.**
 
 ____
 
-### [`pstar.plist(self, *args, **kwargs)`](./pstar_plist.md)
+### [`pstar.plist(*args, **kwargs)`](./pstar_plist.md)
 
 `list` subclass for powerful, concise data processing.
 
@@ -397,7 +397,7 @@ Zips `self` with `others`, recursively.
 
 ____
 
-### [`pstar.pset(set)`](./pstar_pset.md)
+### [`pstar.pset(iterable=(), /)`](./pstar_pset.md)
 
 Placeholder `set` subclass. Mostly unimplemented.
 
@@ -407,13 +407,13 @@ Call the `qj` logging function with `self` as the value to be logged. All other 
 
 ____
 
-### [`pstar.pstar(self, obj, cls_map=None, depth=-1, dbg=0)`](./pstar_pstar.md)
+### [`pstar.pstar(obj, cls_map=None, depth=-1, dbg=0)`](./pstar_pstar.md)
 
 Recursively converts between standard python types and pstar types.
 
 ____
 
-### [`pstar.ptuple(iterable=())`](./pstar_ptuple.md)
+### [`pstar.ptuple(iterable=(), /)`](./pstar_ptuple.md)
 
 Placeholder `tuple` subclass. Mostly unimplemented.
 

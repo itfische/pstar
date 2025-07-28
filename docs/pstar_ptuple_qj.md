@@ -5,7 +5,7 @@ Call the `qj` logging function with `self` as the value to be logged. All other 
 `qj` is a debug logging function. Calling `ptuple.qj()` is often the fastest way
 to begin debugging an issue.
 
-See [qj](https://github.com/iansf/qj) for detailed information on using `qj`.
+See [qj](https://github.com/itfische/qj) for detailed information on using `qj`.
 
 **Examples:**
 ```python
@@ -21,4 +21,4 @@ pt.qj('pt')
 
 
 
-## [Source](../pstar/pstar.py#L1083-L1104)
+## [Source](../pstar/pstar.py#L1085-L1107)

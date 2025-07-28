@@ -52,4 +52,4 @@ assert (filtered.lfill(3) ==
 
 
 
-## [Source](../pstar/pstar.py#L5207-L5260)
+## [Source](../pstar/pstar.py#L5205-L5258)

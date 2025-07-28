@@ -26,4 +26,4 @@ assert ([type(x) for x in by_bar.astuple()] == [tuple, tuple])
 
 
 
-## [Source](../pstar/pstar.py#L3422-L3452)
+## [Source](../pstar/pstar.py#L3419-L3449)

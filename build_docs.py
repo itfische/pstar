@@ -239,7 +239,7 @@ def docs_for(obj):
 def signature_for(obj):
   signature = ''
   try:
-    signature = inspect.formatargspec(*inspect.getargspec(obj))
+    signature = str(inspect.signature(obj))
   except Exception as e:
     try:
       signature = '(%s)' % inspect.getmro(obj)[1].__name__

@@ -285,19 +285,9 @@ See `pstar.pstar` for more details and fine-grained control over the conversion 
 
 ## Testing:
 
-`pstar` has extensive tests that all pass on python 2.7 and 3.6. You can run them with nosetests:
+[`pstar`](./pstar.md) has extensive tests that all pass on python 3.6+. You can run them directly:
 ```bash
-$ nosetests
-..........................................................................................................................................................................................................................SS
-----------------------------------------------------------------------
-Ran 220 tests in 1.453s
-
-OK (skipped=2)
-```
-
-Or you can run them directly:
-```bash
-$ python3 pstar/tests/pstar_test.py
+$ python -m pstar.tests.pstar_test
 ..........................................................................................................................................................................................................................ss
 ----------------------------------------------------------------------
 Ran 220 tests in 0.693s
@@ -308,15 +298,10 @@ OK (skipped=2)
 If you are adding a test or modifying an existing test, be sure to do so in
 [pstar_test.py.template](../pstar_test.py.template), rather than pstar/tests/pstar_test.py.
 After modification, you can rebuild pstar_test.py and rerun all of the tests with the
-following command (assuming that `nosetests` is installed for python 2.7 and `python3` is your
-binary for python 3.6+:
+following command:
 ```bash
-python build_docs.py; nosetests --nologcapture --nocapture; python3 pstar/tests/pstar_test.py
+python build_docs.py; python -m pstar.tests.pstar_test
 ```
-
-`--nologcapture` and `--nocapture` are useful for writing or debugging tests that involve logging,
-such as the various tests of [`qj`](https://github.com/iansf/qj) integration. Otherwise they are
-not needed.
 
 
 ## Disclaimer:

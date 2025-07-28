@@ -47,4 +47,4 @@ assert (pd.far == 2.0)
 
 
 
-## [Source](../pstar/pstar.py#L422-L484)
+## [Source](../pstar/pstar.py#L421-L483)

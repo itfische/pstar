@@ -22,4 +22,4 @@ assert (pd.update({'baz': 'three'}).baz == 'three')
 
 
 
-## [Source](../pstar/pstar.py#L293-L313)
+## [Source](../pstar/pstar.py#L291-L311)

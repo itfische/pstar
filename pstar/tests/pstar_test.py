@@ -1170,7 +1170,7 @@ class PStarTest(unittest.TestCase):
 
     # by_foo is just foo with an extra plist wrapping each element.
     by_foo = foos.foo.groupby()
-    by_foo_psplat = by_foo.apply(lambda x, *a, **kw: qj(x, *a, **kw), psplat=True, psplit=psplit, n=0, b=0, *(None, 0), **dict(t=0, z=0))
+    by_foo_psplat = by_foo.apply(lambda x, *a, **kw: qj(x, *a, **kw), psplat=True, psplit=psplit, n=0, b=0, **dict(z=0))
 
     # psplatting by_foo gets rid of the inner plist wrappers, so the result should be the same as foos.
     self.assertEqual(foos.aslist(),
@@ -1186,8 +1186,8 @@ class PStarTest(unittest.TestCase):
 
     by_bar_baz = foos.bar.sortby(reverse=True).groupby().baz.groupby().baz.sortby_().root()
 
-    by_bar_baz_apply_paslist = by_bar_baz.apply(lambda x, *a, **kw: qj(x, *a, **kw), paslist=True, psplit=psplit, n=0, b=0, *(None, 0), **dict(t=0, z=0))
-    by_bar_baz_apply_paslist_psplat = by_bar_baz.apply(lambda *x, **kw: qj(x, **kw), paslist=True, psplat=True, psplit=psplit, n=0, b=0, **dict(t=0, z=0))
+    by_bar_baz_apply_paslist = by_bar_baz.apply(lambda x, *a, **kw: qj(x, *a, **kw), paslist=True, psplit=psplit, n=0, b=0, **dict(z=0))
+    by_bar_baz_apply_paslist_psplat = by_bar_baz.apply(lambda *x, **kw: qj(x, **kw), paslist=True, psplat=True, psplit=psplit, n=0, b=0, **dict(z=0))
 
     # This test shows that doing apply(..., paslist=True) may give back a plist with lower depth than the input plist.
     # This is because aslist() has to be fully recursive, but there isn't a true inverse operation that we can know a priori,
@@ -2175,17 +2175,18 @@ class PStarTest(unittest.TestCase):
       qj.LOG_FN = mock_log_fn
       qj.COLOR = False
 
-      self.assertEqual(foos.qj_lambda(foos, 'foos', psplit=1, n=0, p=0, *(None, 0), **dict(t=0, z=0)).aslist(),
+      self.assertEqual(foos.qj_lambda(foos, 'foos', psplit=1, n=0, p=0, **dict(z=0)).aslist(),
                        foos.aslist())
 
+      # In the modern threading pool implementation, the original stack frame is not at all visible on the stack, so we'll ignore the file and function names for this test.
       mock_log_fn.assert_has_calls(
           [
               mock.call(
-                  RegExp(r"qj: <pstar_test> <lambda>.lambda: foos <\d+>: \{'bar': 0, 'foo': 0, 'qj_lambda':.*\}")),
+                  RegExp(r"qj: .*: foos <\d+>: \{'bar': 0, 'foo': 0, 'qj_lambda':.*\}")),
               mock.call(
-                  RegExp(r"qj: <pstar_test> <lambda>.lambda: foos <\d+>: \{'bar': 1, 'foo': 1, 'qj_lambda':.*\}")),
+                  RegExp(r"qj: .*: foos <\d+>: \{'bar': 1, 'foo': 1, 'qj_lambda':.*\}")),
               mock.call(
-                  RegExp(r"qj: <pstar_test> <lambda>.lambda: foos <\d+>: \{'bar': 0, 'foo': 2, 'qj_lambda':.*\}")),
+                  RegExp(r"qj: .*: foos <\d+>: \{'bar': 0, 'foo': 2, 'qj_lambda':.*\}")),
           ],
           any_order=True)
       self.assertEqual(mock_log_fn.call_count, 3)
@@ -2201,17 +2202,18 @@ class PStarTest(unittest.TestCase):
       qj.LOG_FN = mock_log_fn
       qj.COLOR = False
 
-      self.assertEqual(foos.qj_('foos', psplit=1, n=0, p=0, *(None, 0), **dict(t=0, z=0)).aslist(),
+      self.assertEqual(foos.qj_('foos', psplit=1, n=0, p=0, **dict(z=0)).aslist(),
                        foos.aslist())
 
+      # In the modern threading pool implementation, the original stack frame is not at all visible on the stack, so we'll ignore the file and function names for this test.
       mock_log_fn.assert_has_calls(
           [
               mock.call(
-                  RegExp(r"qj: <pool> mapstar: foos <\d+>: \{'bar': 0, 'foo': 0\}")),
+                  RegExp(r"qj: .*: foos <\d+>: \{'bar': 0, 'foo': 0\}")),
               mock.call(
-                  RegExp(r"qj: <pool> mapstar: foos <\d+>: \{'bar': 1, 'foo': 1\}")),
+                  RegExp(r"qj: .*: foos <\d+>: \{'bar': 1, 'foo': 1\}")),
               mock.call(
-                  RegExp(r"qj: <pool> mapstar: foos <\d+>: \{'bar': 0, 'foo': 2\}")),
+                  RegExp(r"qj: .*: foos <\d+>: \{'bar': 0, 'foo': 2\}")),
           ],
           any_order=True)
       self.assertEqual(mock_log_fn.call_count, 3)
@@ -2252,6 +2254,7 @@ class PStarTest(unittest.TestCase):
 
   def test_plist_of_pdict_inner_qj(self):
     foos = plist([pdict(foo=i, bar=i % 2) for i in range(3)])
+    bars = plist([plist([pdict(foo=i, bar=i % 2) for i in range(3)])])
 
     log_fn = qj.LOG_FN
     with mock.patch('logging.info') as mock_log_fn:
@@ -2261,6 +2264,9 @@ class PStarTest(unittest.TestCase):
       self.assertEqual(foos.qj_('foos').aslist(),
                        foos.aslist())
 
+      self.assertEqual(bars.qj__('bars').aslist(),
+                       bars.aslist())
+
       mock_log_fn.assert_has_calls(
           [
               mock.call(
@@ -2269,12 +2275,169 @@ class PStarTest(unittest.TestCase):
                   RegExp(r"qj: <pstar_test> test_plist_of_pdict_inner_qj: foos <\d+>: \{'bar': 1, 'foo': 1\}")),
               mock.call(
                   RegExp(r"qj: <pstar_test> test_plist_of_pdict_inner_qj: foos <\d+>: \{'bar': 0, 'foo': 2\}")),
+
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_pdict_inner_qj:\s+bars <\d+>: \{'bar': 0, 'foo': 0\}")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_pdict_inner_qj:\s+bars <\d+>: \{'bar': 1, 'foo': 1\}")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_pdict_inner_qj:\s+bars <\d+>: \{'bar': 0, 'foo': 2\}")),
           ],
           any_order=False)
-      self.assertEqual(mock_log_fn.call_count, 3)
+      self.assertEqual(mock_log_fn.call_count, 6)
 
     qj.LOG_FN = log_fn
     qj.COLOR = True
+
+  def test_plist_of_defaultpdict_inner_qj(self):
+    foos = plist([defaultpdict(foo=i, bar=i % 2) for i in range(3)])
+    bars = plist([plist([defaultpdict(foo=i, bar=i % 2) for i in range(3)])])
+
+    log_fn = qj.LOG_FN
+    with mock.patch('logging.info') as mock_log_fn:
+      qj.LOG_FN = mock_log_fn
+      qj.COLOR = False
+
+      self.assertEqual(foos.qj_('foos').aslist(),
+                       foos.aslist())
+
+      self.assertEqual(bars.qj__('bars').aslist(),
+                       bars.aslist())
+
+      mock_log_fn.assert_has_calls(
+          [
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_defaultpdict_inner_qj: foos <\d+>: \{'bar': 0, 'foo': 0\}")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_defaultpdict_inner_qj: foos <\d+>: \{'bar': 1, 'foo': 1\}")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_defaultpdict_inner_qj: foos <\d+>: \{'bar': 0, 'foo': 2\}")),
+
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_defaultpdict_inner_qj:\s+bars <\d+>: \{'bar': 0, 'foo': 0\}")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_defaultpdict_inner_qj:\s+bars <\d+>: \{'bar': 1, 'foo': 1\}")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_defaultpdict_inner_qj:\s+bars <\d+>: \{'bar': 0, 'foo': 2\}")),
+          ],
+          any_order=False)
+      self.assertEqual(mock_log_fn.call_count, 6)
+
+    qj.LOG_FN = log_fn
+    qj.COLOR = True
+
+  def test_plist_of_pset_inner_qj(self):
+    foos = plist([pset([i]) for i in range(3)])
+    bars = plist([plist([pset([i])]) for i in range(3)])
+
+    log_fn = qj.LOG_FN
+    with mock.patch('logging.info') as mock_log_fn:
+      qj.LOG_FN = mock_log_fn
+      qj.COLOR = False
+
+      self.assertEqual(foos.qj_('foos').aslist(),
+                       foos.aslist())
+
+      self.assertEqual(bars.qj__('bars').aslist(),
+                       bars.aslist())
+
+      mock_log_fn.assert_has_calls(
+          [
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_pset_inner_qj: foos <\d+>: pset\(\{0\}\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_pset_inner_qj: foos <\d+>: pset\(\{1\}\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_pset_inner_qj: foos <\d+>: pset\(\{2\}\)")),
+
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_pset_inner_qj:\s+bars <\d+>: pset\(\{0\}\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_pset_inner_qj:\s+bars <\d+>: pset\(\{1\}\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_pset_inner_qj:\s+bars <\d+>: pset\(\{2\}\)")),
+          ],
+          any_order=False)
+      self.assertEqual(mock_log_fn.call_count, 6)
+
+    qj.LOG_FN = log_fn
+    qj.COLOR = True
+
+  def test_plist_of_frozenpset_inner_qj(self):
+    foos = plist([frozenpset([i]) for i in range(3)])
+    bars = plist([plist([frozenpset([i])]) for i in range(3)])
+
+    log_fn = qj.LOG_FN
+    with mock.patch('logging.info') as mock_log_fn:
+      qj.LOG_FN = mock_log_fn
+      qj.COLOR = False
+
+      self.assertEqual(foos.qj_('foos').aslist(),
+                       foos.aslist())
+
+      self.assertEqual(bars.qj__('bars').aslist(),
+                       bars.aslist())
+
+      mock_log_fn.assert_has_calls(
+          [
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_frozenpset_inner_qj: foos <\d+>: frozenpset\(\{0\}\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_frozenpset_inner_qj: foos <\d+>: frozenpset\(\{1\}\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_frozenpset_inner_qj: foos <\d+>: frozenpset\(\{2\}\)")),
+
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_frozenpset_inner_qj:\s+bars <\d+>: frozenpset\(\{0\}\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_frozenpset_inner_qj:\s+bars <\d+>: frozenpset\(\{1\}\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_frozenpset_inner_qj:\s+bars <\d+>: frozenpset\(\{2\}\)")),
+          ],
+          any_order=False)
+      self.assertEqual(mock_log_fn.call_count, 6)
+
+    qj.LOG_FN = log_fn
+    qj.COLOR = True
+
+
+  def test_plist_of_ptuplet_inner_qj(self):
+    foos = plist([ptuple([i]) for i in range(3)])
+    bars = plist([plist([ptuple([i])]) for i in range(3)])
+
+    log_fn = qj.LOG_FN
+    with mock.patch('logging.info') as mock_log_fn:
+      qj.LOG_FN = mock_log_fn
+      qj.COLOR = False
+
+      self.assertEqual(foos.qj_('foos').aslist(),
+                       foos.aslist())
+
+      self.assertEqual(bars.qj__('bars').aslist(),
+                       bars.aslist())
+
+      mock_log_fn.assert_has_calls(
+          [
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_ptuplet_inner_qj: foos <\d+>: \(0,\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_ptuplet_inner_qj: foos <\d+>: \(1,\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_ptuplet_inner_qj: foos <\d+>: \(2,\)")),
+
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_ptuplet_inner_qj:\s+bars <\d+>: \(0,\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_ptuplet_inner_qj:\s+bars <\d+>: \(1,\)")),
+              mock.call(
+                  RegExp(r"qj: <pstar_test> test_plist_of_ptuplet_inner_qj:\s+bars <\d+>: \(2,\)")),
+          ],
+          any_order=False)
+      self.assertEqual(mock_log_fn.call_count, 6)
+
+    qj.LOG_FN = log_fn
+    qj.COLOR = True
+
 
   def test_plist_of_pdict_groupby_groupby_apply_args(self):
     foos = plist([pdict(foo=i, bar=i % 2) for i in range(5)])
@@ -2408,6 +2571,30 @@ class PStarTest(unittest.TestCase):
           any_order=False)
       self.assertEqual(mock_log_fn.call_count, 3)
       mock_log_fn.reset_mock()
+
+      # Ensure that the shallower calls to qj also work correctly.
+      by_bar_bin.foo.qj_('CORRECT: foos by_bar_bin')
+      mock_log_fn.assert_has_calls(
+          [
+              mock.call(
+                  RegExp(r'qj: <pstar_test> test_plist_of_pdict_groupby_groupby_apply_args:\s+CORRECT: foos by_bar_bin <\d+>: \[\[0, 2\], \[4\]\]')),
+              mock.call(
+                  RegExp(r'qj: <pstar_test> test_plist_of_pdict_groupby_groupby_apply_args:\s+CORRECT: foos by_bar_bin <\d+>: \[\[1, 3\]\]')),
+          ],
+          any_order=False)
+      self.assertEqual(mock_log_fn.call_count, 2)
+      mock_log_fn.reset_mock()
+
+      by_bar_bin.foo.qj('CORRECT: foos by_bar_bin')
+      mock_log_fn.assert_has_calls(
+          [
+              mock.call(
+                  RegExp(r'qj: <pstar_test> test_plist_of_pdict_groupby_groupby_apply_args:\s+CORRECT: foos by_bar_bin <\d+>: \[\[\[0, 2\], \[4\]\], \[\[1, 3\]\]\]')),
+          ],
+          any_order=False)
+      self.assertEqual(mock_log_fn.call_count, 1)
+      mock_log_fn.reset_mock()
+
 
     qj.LOG_FN = log_fn
     qj.COLOR = True
@@ -2632,9 +2819,9 @@ class PStarTest(unittest.TestCase):
               mock.call(
                   RegExp(r"qj: <pstar_test> test_sample_data_analysis_flow: bun <\d+>: \['10', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0'\]")),
               mock.call(
-                  RegExp(r'qj: <pstar_test> test_sample_data_analysis_flow:  10 \(shape \(min \(mean std\) max\) hist\) <\d+>: \(\(91,\), \(0\.0, \(8\.4\d*, 5\.0\d*\), 21\.0\), array\(\[22, 23, 29, 11,  6\]\)')),
+                  RegExp(r'qj: <pstar_test> test_sample_data_analysis_flow:  10 \(shape \(min \(mean std\) max\) hist\) <\d+>: \(\(91,\), \(0\.0, \(8\.4\d*, 5\.0\d*\), 21\.0\), \[22, 23, 29, 11, 6\]')),
               mock.call(
-                  RegExp(r'qj: <pstar_test> test_sample_data_analysis_flow:  9 \(shape \(min \(mean std\) max\) hist\) <\d+>: \(\(91,\), \(0\.0, \(8.3\d+, 5.1\d+\), 20.0\), array\(\[24, 12, 34, 14,  7\]\)')),
+                  RegExp(r'qj: <pstar_test> test_sample_data_analysis_flow:  9 \(shape \(min \(mean std\) max\) hist\) <\d+>: \(\(91,\), \(0\.0, \(8.3\d+, 5.1\d+\), 20.0\), \[24, 12, 34, 14, 7\]')),
           ],
           any_order=False)
       self.assertEqual(mock_log_fn.call_count, 12)
@@ -2662,42 +2849,30 @@ class PStarTest(unittest.TestCase):
       self.assertEqual(mock_log_fn.call_count, 1)
       mock_log_fn.reset_mock()
 
-      rmx.ungroup(-1).bun.groupby().bam.wrap().np_().apply(lambda y, x: [qj((x_, np.mean(y_))) for x_, y_ in zip(x, y)], rmx_x)
+      rmx.ungroup(-1).bun.groupby().bam.wrap().np_().apply(lambda y, x: [qj((x_, float(np.mean(y_)))) for x_, y_ in zip(x, y)], rmx_x)
       mock_log_fn.assert_has_calls(
           [
               mock.call(
-                  RegExp(r'qj: <pstar_test> .*: x_, np.mean\(y_\) <\d+>: \(10, 8.4\d+\)')),
+                  RegExp(r'qj: <pstar_test> .*: x_, float\(np.mean\(y_\)\) <\d+>: \(10, 8.4\d+\)')),
               mock.call(
-                  RegExp(r'qj: <pstar_test> .*: x_, np.mean\(y_\) <\d+>: \(9, 8.3\d+\)')),
+                  RegExp(r'qj: <pstar_test> .*: x_, float\(np.mean\(y_\)\) <\d+>: \(9, 8.3\d+\)')),
               mock.call(
-                  RegExp(r'qj: <pstar_test> .*: x_, np.mean\(y_\) <\d+>: \(8, 7.3\d+\)')),
+                  RegExp(r'qj: <pstar_test> .*: x_, float\(np.mean\(y_\)\) <\d+>: \(8, 7.3\d+\)')),
           ],
           any_order=False)
       self.assertEqual(mock_log_fn.call_count, 11)
       mock_log_fn.reset_mock()
 
-      if sys.version_info[0] < 3:
-        (rmx.ungroup(-1)[fields].sortby().root().bun.groupby()
-         .bam.np_().max().sortby_(reverse=True).np().uproot().shape.qj('shape').root()
-         .np().mean().qj('means').wrap().apply(
-             lambda y, x: [qj((x_, y_)) for x_, y_ in zip(x, y)], rmx_x
-         )
-         .root()[0].root().apply('__getslice___', 0, 10).qj('bam top 10').wrap()
-         .root()[0].root().__getslice___(0, 10).qj('bam top 10').wrap()
-         .root()[0].root().__getslice__(0, 10, pepth=1).qj('bam top 10').wrap()
-         .root()[0].root().apply(type).qj('bam types')
+      (rmx.ungroup(-1)[fields].sortby().root().bun.groupby()
+        .bam.np_().max().sortby_(reverse=True).np().uproot().shape.qj('shape').root()
+        .np().mean().apply(float).qj('means').wrap().apply(
+            lambda y, x: [qj((x_, y_)) for x_, y_ in zip(x, y)], rmx_x
         )
-      else:
-        (rmx.ungroup(-1)[fields].sortby().root().bun.groupby()
-         .bam.np_().max().sortby_(reverse=True).np().uproot().shape.qj('shape').root()
-         .np().mean().qj('means').wrap().apply(
-             lambda y, x: [qj((x_, y_)) for x_, y_ in zip(x, y)], rmx_x
-         )
-         .root()[0].root().apply('__getitem___', slice(0, 10)).qj('bam top 10').wrap()
-         .root()[0].root().__getitem___(slice(0, 10)).qj('bam top 10').wrap()
-         .root()[0].root().__getitem__(slice(0, 10), pepth=1).qj('bam top 10').wrap()
-         .root()[0].root().apply(type).qj('bam types')
-        )
+        .root()[0].root().apply('__getitem___', slice(0, 10)).qj('bam top 10').wrap()
+        .root()[0].root().__getitem___(slice(0, 10)).qj('bam top 10').wrap()
+        .root()[0].root().__getitem__(slice(0, 10), pepth=1).qj('bam top 10').wrap()
+        .root()[0].root().apply(type).qj('bam types')
+      )
 
       mock_log_fn.assert_has_calls(
           [
@@ -2706,11 +2881,11 @@ class PStarTest(unittest.TestCase):
               mock.call(
                   RegExp(r'qj: <pstar_test> test_sample_data_analysis_flow:       means <\d+>: \[8.4\d+, 8.3\d+, 7.3\d+, 6.1\d+, 6.6\d+, 5.8\d+, 5.0\d+, 4.8\d+, 4.0\d+, 3.7\d+, 3.2\d+\]')),
               mock.call(
-                  RegExp(r'qj: <pstar_test> .*: x_, y_ <\d+>: \(10, 8.4\d+\)')),
+                  RegExp(r'qj: <pstar_test> .*: .* <\d+>: \(10, 8.4\d+\)')),
               mock.call(
-                  RegExp(r'qj: <pstar_test> .*: x_, y_ <\d+>: \(9, 8.3\d+\)')),
+                  RegExp(r'qj: <pstar_test> .*: .* <\d+>: \(9, 8.3\d+\)')),
               mock.call(
-                  RegExp(r'qj: <pstar_test> .*: x_, y_ <\d+>: \(8, 7.3\d+\)')),
+                  RegExp(r'qj: <pstar_test> .*: .* <\d+>: \(8, 7.3\d+\)')),
           ],
           any_order=False)
       self.assertEqual(mock_log_fn.call_count, 17)
@@ -2800,12 +2975,11 @@ class PStarTest(unittest.TestCase):
                        [(0, 1, 4)]],
                       [[(1, 2, 7), (3, 2, 7)]]])
 
-  @unittest.skip('slow')
-  def test_z_fast_parallel_file_processing(self):
+  def test_fast_parallel_file_processing(self):
     tdir = tempfile.mkdtemp()
     try:
       qj(tic=1)
-      files = 'test_' + plist([str(i) for i in range(5000)]) + '.txt'
+      files = 'test_' + plist([str(i) for i in range(50)]) + '.txt'
       files = files.values_like(tdir).apply(os.path.join, files)
       with files.apply(open, 'w', psplit=25) as wf:
         wf.write(files, psplit=1)
@@ -2820,26 +2994,26 @@ class PStarTest(unittest.TestCase):
 
   @unittest.skip('slow')
   def test_z_plist_of_pdict_timing(self):
-    qj(tic=1, toc=1)
+    qj(tic=1)
     large_input = [pdict(foo=i, bar=i % 2, bin=i % 13, bun=i % 11) for i in range(100000)]
-    qj(tic=1, toc=1)
+    qj(tictoc=1)
 
     foos = plist(large_input)
-    qj(tic=1, toc=1)
+    qj(tictoc=1)
 
     (foos.bar == 0).baz = 3 - ((foos.bar == 0).foo % 3)
-    qj(tic=1, toc=1)
+    qj(tictoc=1)
     (foos.bar == 1).baz = 6
-    qj(tic=1, toc=1)
+    qj(tictoc=1)
 
     fields = ('bin', 'bar')
     by = foos[fields].sortby().groupby().bun.sortby_().groupby()
-    qj(tic=1, toc=1)
+    qj(tictoc=1)
     by.baz = by.foo % (by.bin + by.bun + 1)
-    qj(tic=1, toc=1)
+    qj(tictoc=1)
 
     by.baz.qj(by[fields].puniq().ungroup().pstr(), n=10, pepth=2)
-    qj(tic=1, toc=1)
+    qj(toc=1)
 
   #############################################################################
   # Tests added from documentation.

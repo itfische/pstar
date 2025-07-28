@@ -31,4 +31,4 @@ See `plist.root` for more details.
 
 
 
-## [Source](../pstar/pstar.py#L3290-L3321)
+## [Source](../pstar/pstar.py#L3287-L3318)

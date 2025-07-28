@@ -106,4 +106,4 @@ assert (by.format(foo=by._[:3:1]).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2785-L2919)
+## [Source](../pstar/pstar.py#L2788-L2922)

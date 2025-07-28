@@ -700,7 +700,7 @@ Links for detailed documentation are below.
 
 ____
 
-### [`pstar.defaultpdict(self, *a, **kw)`](./pstar_defaultpdict.md)
+### [`pstar.defaultpdict(*a, **kw)`](./pstar_defaultpdict.md)
 
 `defaultdict` subclass where everything is automatically a property.
 
@@ -758,7 +758,7 @@ Update `self`. **Returns `self` to allow chaining.**
 
 ____
 
-### [`pstar.frozenpset(frozenset)`](./pstar_frozenpset.md)
+### [`pstar.frozenpset(iterable=(), /)`](./pstar_frozenpset.md)
 
 Placeholder `frozenset` subclass. Mostly unimplemented.
 
@@ -768,7 +768,7 @@ Call the `qj` logging function with `self` as the value to be logged. All other 
 
 ____
 
-### [`pstar.pdict(self, *a, **kw)`](./pstar_pdict.md)
+### [`pstar.pdict(*a, **kw)`](./pstar_pdict.md)
 
 `dict` subclass where everything is automatically a property.
 
@@ -818,7 +818,7 @@ Update `self`. **Returns `self` to allow chaining.**
 
 ____
 
-### [`pstar.plist(self, *args, **kwargs)`](./pstar_plist.md)
+### [`pstar.plist(*args, **kwargs)`](./pstar_plist.md)
 
 `list` subclass for powerful, concise data processing.
 
@@ -1072,7 +1072,7 @@ Zips `self` with `others`, recursively.
 
 ____
 
-### [`pstar.pset(set)`](./pstar_pset.md)
+### [`pstar.pset(iterable=(), /)`](./pstar_pset.md)
 
 Placeholder `set` subclass. Mostly unimplemented.
 
@@ -1082,13 +1082,13 @@ Call the `qj` logging function with `self` as the value to be logged. All other 
 
 ____
 
-### [`pstar.pstar(self, obj, cls_map=None, depth=-1, dbg=0)`](./pstar_pstar.md)
+### [`pstar.pstar(obj, cls_map=None, depth=-1, dbg=0)`](./pstar_pstar.md)
 
 Recursively converts between standard python types and pstar types.
 
 ____
 
-### [`pstar.ptuple(iterable=())`](./pstar_ptuple.md)
+### [`pstar.ptuple(iterable=(), /)`](./pstar_ptuple.md)
 
 Placeholder `tuple` subclass. Mostly unimplemented.
 
@@ -1100,19 +1100,9 @@ Call the `qj` logging function with `self` as the value to be logged. All other 
 
 ## Testing:
 
-[`pstar`](./pstar.md) has extensive tests that all pass on python 2.7 and 3.6. You can run them with nosetests:
+[`pstar`](./pstar.md) has extensive tests that all pass on python 3.6+. You can run them directly:
 ```bash
-$ nosetests
-..........................................................................................................................................................................................................................SS
-----------------------------------------------------------------------
-Ran 220 tests in 1.453s
-
-OK (skipped=2)
-```
-
-Or you can run them directly:
-```bash
-$ python3 pstar/tests/pstar_test.py
+$ python -m pstar.tests.pstar_test
 ..........................................................................................................................................................................................................................ss
 ----------------------------------------------------------------------
 Ran 220 tests in 0.693s
@@ -1123,15 +1113,10 @@ OK (skipped=2)
 If you are adding a test or modifying an existing test, be sure to do so in
 [pstar_test.py.template](../pstar_test.py.template), rather than pstar/tests/pstar_test.py.
 After modification, you can rebuild pstar_test.py and rerun all of the tests with the
-following command (assuming that `nosetests` is installed for python 2.7 and `python3` is your
-binary for python 3.6+:
+following command:
 ```bash
-python build_docs.py; nosetests --nologcapture --nocapture; python3 pstar/tests/pstar_test.py
+python build_docs.py; python -m pstar.tests.pstar_test
 ```
-
-`--nologcapture` and `--nocapture` are useful for writing or debugging tests that involve logging,
-such as the various tests of [`qj`](https://github.com/iansf/qj) integration. Otherwise they are
-not needed.
 
 
 ## Disclaimer:

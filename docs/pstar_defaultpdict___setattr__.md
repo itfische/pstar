@@ -25,4 +25,4 @@ assert (pd.floo == pd['floo'] == 4.0)
 
 
 
-## [Source](../pstar/pstar.py#L610-L633)
+## [Source](../pstar/pstar.py#L609-L632)

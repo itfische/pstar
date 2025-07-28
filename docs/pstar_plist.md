@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).`plist(self, *args, **kwargs)`
+# [`pstar`](./pstar.md).`plist(*args, **kwargs)`
 
 `list` subclass for powerful, concise data processing.
 
@@ -440,4 +440,4 @@ Adds and returns an outer [`plist`](./pstar_plist.md) around `self`.
 
 Zips `self` with `others`, recursively.
 
-## [Source](../pstar/pstar.py#L1744-L5658)
+## [Source](../pstar/pstar.py#L1747-L5656)

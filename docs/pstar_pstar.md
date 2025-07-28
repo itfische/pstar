@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).`pstar(self, obj, cls_map=None, depth=-1, dbg=0)`
+# [`pstar`](./pstar.md).`pstar(obj, cls_map=None, depth=-1, dbg=0)`
 
 Recursively converts between standard python types and pstar types.
 
@@ -239,4 +239,4 @@ This is convenient if you only imported as `from pstar import pstar`.
 
 
 
-## [Source](../pstar/pstar.py#L5756-L6000)
+## [Source](../pstar/pstar.py#L5751-L5995)

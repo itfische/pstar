@@ -5,7 +5,7 @@ Applies logging function qj to self for easy in-chain logging.
 `qj` is a debug logging function. Calling `plist.qj()` is often the fastest way
 to begin debugging an issue.
 
-See [qj](https://github.com/iansf/qj) for detailed information on using `qj`.
+See [qj](https://github.com/itfische/qj) for detailed information on using `qj`.
 
 **Examples:**
 ```python
@@ -28,4 +28,4 @@ assert (foos.foo.qj('foo').aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4351-L4377)
+## [Source](../pstar/pstar.py#L4348-L4375)

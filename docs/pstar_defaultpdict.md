@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).`defaultpdict(self, *a, **kw)`
+# [`pstar`](./pstar.md).`defaultpdict(*a, **kw)`
 
 `defaultdict` subclass where everything is automatically a property.
 
@@ -123,4 +123,4 @@ Change the keys of `self` or a copy while keeping the same values.
 
 Update `self`. **Returns `self` to allow chaining.**
 
-## [Source](../pstar/pstar.py#L493-L916)
+## [Source](../pstar/pstar.py#L492-L916)

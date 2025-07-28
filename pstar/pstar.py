@@ -35,6 +35,7 @@ except AttributeError:
 import inspect
 from multiprocessing.dummy import Pool
 import operator
+import os
 import sys
 import types
 
@@ -108,9 +109,6 @@ class _SyntaxSugar(type):
     ).update({cls: cls.__mro__[1]})  # Map this pstar class to its superclass
     assert len(keys) == len(cls_map)  # We better not have dropped any classes
     return pstar(other, cls_map, depth)
-
-  if sys.version_info[0] < 3:
-    __div__, __rdiv__ = __truediv__, __rtruediv__
 
 
 KeyValue = collections.namedtuple('KeyValue', 'key value')
@@ -401,7 +399,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     `qj` is a debug logging function. Calling `pdict.qj()` is often the fastest way
     to begin debugging an issue.
 
-    See [qj](https://github.com/iansf/qj) for detailed information on using `qj`.
+    See [qj](https://github.com/itfische/qj) for detailed information on using `qj`.
 
     Examples:
     ```python
@@ -416,7 +414,8 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     Returns:
       `self`, as processed by the arguments supplied to `qj`.
     """
-    depth = kw.pop('_depth', 0) + 2
+    base_depth = 3
+    depth = kw.pop('_depth', 0) + base_depth
     return qj(self, _depth=depth, *a, **kw)
 
   def rekey(self, map_or_fn=None, inplace=False, **kw):
@@ -833,7 +832,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     `qj` is a debug logging function. Calling `defaultpdict.qj()` is often the fastest way
     to begin debugging an issue.
 
-    See [qj](https://github.com/iansf/qj) for detailed information on using `qj`.
+    See [qj](https://github.com/itfische/qj) for detailed information on using `qj`.
 
     Examples:
     ```python
@@ -848,7 +847,8 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     Returns:
       `self`, as processed by the arguments supplied to `qj`.
     """
-    depth = kw.pop('_depth', 0) + 2
+    base_depth = 3
+    depth = kw.pop('_depth', 0) + base_depth
     return qj(self, _depth=depth, *a, **kw)
 
   def rekey(self, map_or_fn=None, inplace=False, **kw):
@@ -961,7 +961,7 @@ class frozenpset(_compatible_metaclass(_SyntaxSugar, frozenset)):
     `qj` is a debug logging function. Calling `frozenpset.qj()` is often the fastest way
     to begin debugging an issue.
 
-    See [qj](https://github.com/iansf/qj) for detailed information on using `qj`.
+    See [qj](https://github.com/itfische/qj) for detailed information on using `qj`.
 
     Examples:
     ```python
@@ -974,7 +974,8 @@ class frozenpset(_compatible_metaclass(_SyntaxSugar, frozenset)):
     Returns:
       `self`, as processed by the arguments supplied to `qj`.
     """
-    depth = kw.pop('_depth', 0) + 2
+    base_depth = 3
+    depth = kw.pop('_depth', 0) + base_depth
     return qj(self, _depth=depth, *a, **kw)
 
 
@@ -1024,7 +1025,7 @@ class pset(_compatible_metaclass(_SyntaxSugar, set)):
     `qj` is a debug logging function. Calling `pset.qj()` is often the fastest way
     to begin debugging an issue.
 
-    See [qj](https://github.com/iansf/qj) for detailed information on using `qj`.
+    See [qj](https://github.com/itfische/qj) for detailed information on using `qj`.
 
     Examples:
     ```python
@@ -1037,7 +1038,8 @@ class pset(_compatible_metaclass(_SyntaxSugar, set)):
     Returns:
       `self`, as processed by the arguments supplied to `qj`.
     """
-    depth = kw.pop('_depth', 0) + 2
+    base_depth = 3
+    depth = kw.pop('_depth', 0) + base_depth
     return qj(self, _depth=depth, *a, **kw)
 
 
@@ -1086,7 +1088,7 @@ class ptuple(_compatible_metaclass(_SyntaxSugar, tuple)):
     `qj` is a debug logging function. Calling `ptuple.qj()` is often the fastest way
     to begin debugging an issue.
 
-    See [qj](https://github.com/iansf/qj) for detailed information on using `qj`.
+    See [qj](https://github.com/itfische/qj) for detailed information on using `qj`.
 
     Examples:
     ```python
@@ -1099,7 +1101,8 @@ class ptuple(_compatible_metaclass(_SyntaxSugar, tuple)):
     Returns:
       `self`, as processed by the arguments supplied to `qj`.
     """
-    depth = kw.pop('_depth', 0) + 2
+    base_depth = 3
+    depth = kw.pop('_depth', 0) + base_depth
     return qj(self, _depth=depth, *a, **kw)
 
 
@@ -1450,10 +1453,7 @@ def _build_binary_op(op):
         or other is pset
         or other is ptuple
        ):
-      if sys.version_info[0] < 3:
-        name = op.__name__.replace('__', '__r', 1)
-      else:
-        name = '__r%s__' % op.__name__
+      name = '__r%s__' % op.__name__
       return getattr(other.__class__, name)(other, self)
     if isinstance(other, plist):
       if len(self) == len(other):
@@ -1554,8 +1554,11 @@ def _build_unary_op(op):
 ################################################################################
 ################################################################################
 ################################################################################
-if sys.version_info[0] < 3:
-  STRING_TYPES = types.StringTypes
+if sys.version_info[0] == 3 and sys.version_info[1] >= 13:
+  STRING_TYPES = str
+  PLIST_CALL_ATTR_CALL_PEPTH_DELTA = 1
+elif sys.version_info[0] > 3:
+  STRING_TYPES = str
   PLIST_CALL_ATTR_CALL_PEPTH_DELTA = 1
 else:
   STRING_TYPES = str
@@ -1640,7 +1643,7 @@ def _call_attr(_pobj, _pname, _pattr, *_pargs, **_pkwargs):
   elif psplit > 0 and isinstance(_pobj, plist) and _pname == 'apply':
     result = _pattr(psplit=psplit, *_pargs, **_pkwargs)
   elif _pname == 'qj':
-    depth = _pkwargs.pop('_depth', 0) + call_pepth + PLIST_CALL_ATTR_CALL_PEPTH_DELTA + (sys.version_info[0] < 3)
+    depth = _pkwargs.pop('_depth', 0) + call_pepth + 1  # This call doesn't incur a pass through a list comprehension, so don't use PLIST_CALL_ATTR_CALL_PEPTH_DELTA, just use 1.
     result = _pattr(_depth=depth, *_pargs, **_pkwargs)
   elif _pname in NONCALLABLE_ATTRS:
     return _pattr
@@ -3019,9 +3022,6 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   __mul__, __rmul__, __imul__ = _build_binary_ops(operator.__mul__, operator.__imul__)
   __truediv__, __rtruediv__, __itruediv__ = _build_binary_ops(operator.__truediv__, operator.__itruediv__)
 
-  if sys.version_info[0] < 3:
-    __div__, __rdiv__, __idiv__ = _build_binary_ops(operator.__div__, operator.__idiv__)
-
   __pow__, __rpow__, __ipow__ = _build_binary_ops(operator.__pow__, operator.__ipow__)
 
   __mod__, __rmod__, __imod__ = _build_binary_ops(operator.__mod__, operator.__imod__)
@@ -3048,9 +3048,6 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   __complex__ = _build_unary_op(complex)
 
   __int__ = _build_unary_op(int)
-
-  if sys.version_info[0] < 3:
-    __long__ = _build_unary_op(long)
 
   __float__ = _build_unary_op(float)
 
@@ -4354,7 +4351,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     `qj` is a debug logging function. Calling `plist.qj()` is often the fastest way
     to begin debugging an issue.
 
-    See [qj](https://github.com/iansf/qj) for detailed information on using `qj`.
+    See [qj](https://github.com/itfische/qj) for detailed information on using `qj`.
 
     Examples:
     ```python
@@ -4373,7 +4370,8 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       `self`
     """
     call_pepth = kwargs.pop('call_pepth', 0)
-    return qj(self, _depth=4 + call_pepth, *args, **kwargs)
+    base_depth = 4
+    return qj(self, _depth=base_depth + call_pepth, *args, **kwargs)
 
   ##############################################################################
   # Grouping and sorting methods.
@@ -5745,9 +5743,6 @@ class _Converter(type):
 
   def __rsub__(self, other):
     return self.__rtruediv__(other, depth=1)
-
-  if sys.version_info[0] < 3:
-    __div__, __rdiv__ = __truediv__, __rtruediv__
 
   def cls_map(self):
     return self._cls_map.copy()

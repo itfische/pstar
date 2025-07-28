@@ -19,4 +19,4 @@ assert (pd.__module__.startswith('pstar'))
 
 
 
-## [Source](../pstar/pstar.py#L590-L609)
+## [Source](../pstar/pstar.py#L589-L608)
