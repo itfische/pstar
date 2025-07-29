@@ -16,4 +16,4 @@ assert ([type(x) for x in by_bar.aslist()] == [list, list])
 
 
 
-## [Source](../pstar/pstar.py#L3351-L3370)
+## [Source](../pstar/pstar.py#L3352-L3371)

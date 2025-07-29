@@ -1610,8 +1610,6 @@ def _call_attr(_pobj, _pname, _pattr, *_pargs, **_pkwargs):
       attrs = [list.__getattribute__(x, _pname) if isinstance(x, list) else getattr(x, _pname) for x in _pobj]
 
       if psplit > 0 and isinstance(_pobj, plist):
-        pool = _get_thread_pool(psplit, len(_pobj))
-
         call_args = [pdict(x=x, i=i) for i, x in enumerate(_pobj)]
         map_func = lambda ca: _call_attr(ca.x,
                                          _pname, attrs[ca.i],
@@ -1620,10 +1618,12 @@ def _call_attr(_pobj, _pname, _pattr, *_pargs, **_pkwargs):
                                          psplit=psplit,
                                          *[a[ca.i] for a in pargs],
                                          **{k: v[ca.i] for k, v in pkwargs.items()})
-        pl = plist(pool.map(map_func, call_args, chunksize=_get_thread_chunksize(psplit, len(_pobj))), root=_pobj.__root__)
-        pool.close()
-        pool.join()
+        def make_lambda(ca):
+          return lambda: map_func(ca)
+        callables = [make_lambda(ca) for ca in call_args]
+        pl = plist(_run_in_pool(callables, psplit), root=_pobj.__root__)
         return pl
+
       return plist([_call_attr(x,
                                _pname,
                                attrs[i],
@@ -1728,13 +1728,13 @@ def _successor(v):
   return s
 
 
-MAX_THREADS = 25
-def _get_thread_pool(psplit, obj_len):
-  return Pool(psplit if psplit > 1 else min(MAX_THREADS, obj_len))
-
-
-def _get_thread_chunksize(psplit, obj_len):
-  return max(1, obj_len // psplit) if psplit > 1 else 1
+MAX_THREADS = max(1, os.cpu_count() - 2)
+def _run_in_pool(tasks, psplit):
+  pool_size = psplit if psplit > 1 else min(MAX_THREADS, len(tasks))
+  with Pool(pool_size) as pool:
+    results = [pool.apply_async(task) for task in tasks]
+    ret = [r.get() for r in results]
+    return ret
 
 
 ################################################################################
@@ -2874,8 +2874,9 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
              calling `plist._` before calling the attribute.
       psplit: Integer (default `0`). If greater than `0`, calls to elements of
               `self` are applied in parallel. If `psplit` is `1`, the number of
-              parallel executions is equal to the length of `self`.
-              Otherwise, `psplit` is the number of parallel executions.
+              parallel executions is equal to the length of `self` or the number
+              of CPU cores - 2, whichever is smaller. Otherwise, `psplit` is the
+              number of parallel executions.
       call_pepth: *Private -- do not pass.* Internal state variable for tracking
                   how deep the call stack is in `plist` code, for use with
                   internal methods that need access to the original caller's
@@ -2906,15 +2907,15 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
           raise e
 
     if psplit > 0:
-      pool = _get_thread_pool(psplit, len(self))
-
       call_args = [pdict(x=x, i=i) for i, x in enumerate(self)]
       map_func = lambda ca: ca.x(*[a[ca.i] for a in args],
                                  **{k: v[ca.i] for k, v in kwargs.items()})
-      pl = plist(pool.map(map_func, call_args, chunksize=_get_thread_chunksize(psplit, len(self))), root=self.__root__)
-      pool.close()
-      pool.join()
+      def make_lambda(ca):
+        return lambda: map_func(ca)
+      callables = [make_lambda(ca) for ca in call_args]
+      pl = plist(_run_in_pool(callables, psplit), root=self.__root__)
       return pl
+
     return plist([x(*[a[i] for a in args],
                     **{k: v[i] for k, v in kwargs.items()})
                   for i, x in enumerate(self)],
@@ -4100,8 +4101,9 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
               (sometimes called the 'splat' operator).
       psplit: Integer (default `0`). If greater than `0`, `func` is
               applied in parallel. If `psplit` is `1`, the number of
-              parallel executions is equal to the length of `self`.
-              Otherwise, `psplit` is the number of parallel executions.
+              parallel executions is equal to the length of `self` or the number
+              of CPU cores - 2, whichever is smaller. Otherwise, `psplit` is the
+              number of parallel executions.
 
     Returns:
       `plist` resulting from applying `func` to each element of `self`.
@@ -4129,7 +4131,6 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       return plist([funcs[i](*[a[i] for a in args], **{k: v[i] for k, v in kwargs.items()}) for i, x in enumerate(self)], root=self.__root__)
 
     if psplit > 0:
-      pool = _get_thread_pool(psplit, len(self))
       call_args = [pdict(x=x, i=i) for i, x in enumerate(self)]
       if paslist:
         if psplat:
@@ -4141,9 +4142,11 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
           map_func = lambda ca: funcs[ca.i](*list(ca.x) + [a[ca.i] for a in args], **{k: v[ca.i] for k, v in kwargs.items()})
         else:
           map_func = lambda ca: funcs[ca.i](ca.x, *[a[ca.i] for a in args], **{k: v[ca.i] for k, v in kwargs.items()})
-      pl = plist(pool.map(map_func, call_args, chunksize=_get_thread_chunksize(psplit, len(self))), root=self.__root__)
-      pool.close()
-      pool.join()
+
+      def make_lambda(ca):
+        return lambda: map_func(ca)
+      callables = [make_lambda(ca) for ca in call_args]
+      pl = plist(_run_in_pool(callables, psplit), root=self.__root__)
       return pl
 
     if paslist:

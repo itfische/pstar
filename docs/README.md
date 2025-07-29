@@ -1115,7 +1115,7 @@ If you are adding a test or modifying an existing test, be sure to do so in
 After modification, you can rebuild pstar_test.py and rerun all of the tests with the
 following command:
 ```bash
-python build_docs.py; python -m pstar.tests.pstar_test
+python -m build_docs; python -m pstar.tests.pstar_test
 ```
 
 

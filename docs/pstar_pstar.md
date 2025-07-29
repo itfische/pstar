@@ -239,4 +239,4 @@ This is convenient if you only imported as `from pstar import pstar`.
 
 
 
-## [Source](../pstar/pstar.py#L5751-L5995)
+## [Source](../pstar/pstar.py#L5754-L5998)

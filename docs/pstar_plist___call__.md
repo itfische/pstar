@@ -92,8 +92,9 @@ assert (by.format(foo=by._[:3:1]).aslist() ==
 
 >    **`psplit`**: Integer (default `0`). If greater than `0`, calls to elements of
 >            `self` are applied in parallel. If `psplit` is `1`, the number of
->            parallel executions is equal to the length of `self`.
->            Otherwise, `psplit` is the number of parallel executions.
+>            parallel executions is equal to the length of `self` or the number
+>            of CPU cores - 2, whichever is smaller. Otherwise, `psplit` is the
+>            number of parallel executions.
 
 >    **`call_pepth`**: *Private -- do not pass.* Internal state variable for tracking
 >                how deep the call stack is in [`plist`](./pstar_plist.md) code, for use with
@@ -106,4 +107,4 @@ assert (by.format(foo=by._[:3:1]).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2788-L2922)
+## [Source](../pstar/pstar.py#L2788-L2923)

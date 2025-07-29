@@ -20,10 +20,13 @@ from __future__ import print_function
 
 from collections import defaultdict
 import os
+import random
 import re
 import shutil
 import sys
 import tempfile
+import threading
+import time
 
 import unittest
 import mock
@@ -2235,11 +2238,11 @@ class PStarTest(unittest.TestCase):
       mock_log_fn.assert_has_calls(
           [
               mock.call(
-                  RegExp(r"qj: <pstar> mapstar.lambda: foos <\d+>: \{'bar': 0, 'foo': 0\}")),
+                  RegExp(r"qj: .*: foos <\d+>: \{'bar': 0, 'foo': 0\}")),
               mock.call(
-                  RegExp(r"qj: <pstar> mapstar.lambda: foos <\d+>: \{'bar': 1, 'foo': 1\}")),
+                  RegExp(r"qj: .*: foos <\d+>: \{'bar': 1, 'foo': 1\}")),
               mock.call(
-                  RegExp(r"qj: <pstar> mapstar.lambda: foos <\d+>: \{'bar': 0, 'foo': 2\}")),
+                  RegExp(r"qj: .*: foos <\d+>: \{'bar': 0, 'foo': 2\}")),
           ],
           any_order=True)
       self.assertEqual(mock_log_fn.call_count, 3)
@@ -2976,21 +2979,85 @@ class PStarTest(unittest.TestCase):
                       [[(1, 2, 7), (3, 2, 7)]]])
 
   def test_fast_parallel_file_processing(self):
+    import resource
+    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+    resource.setrlimit(resource.RLIMIT_NOFILE, (4096, hard))
+
     tdir = tempfile.mkdtemp()
     try:
-      qj(tic=1)
-      files = 'test_' + plist([str(i) for i in range(50)]) + '.txt'
+      # qj(tic=1)
+      files = 'test_' + plist([str(i) for i in range(1000)]) + '.txt'
       files = files.values_like(tdir).apply(os.path.join, files)
       with files.apply(open, 'w', psplit=25) as wf:
         wf.write(files, psplit=1)
       with files.apply(open, 'r', psplit=25) as rf:
         contents = rf.read(psplit=1)
-      qj(toc=-1)
+      # qj(toc=-1)
 
       self.assertEqual(files.aslist(),
                        contents.aslist())
     finally:
       shutil.rmtree(tdir, ignore_errors=True)
+
+  def test_psplit_fast(self):
+    log_fn = qj.LOG_FN
+    with mock.patch('logging.info') as mock_log_fn:
+      qj.LOG_FN = mock_log_fn
+      qj.COLOR = False
+
+      num_tasks = 100
+
+      foo = plist(range(num_tasks))
+      func = lambda i, j: qj(i, f'Task {i} with arg {j} running on thread {threading.get_ident()}')
+      out = foo.apply(func, foo, psplit=1)
+
+      mock_log_fn.assert_has_calls(
+          [
+              mock.call(
+                  RegExp(r'qj: <pstar_test> .*: Task 0 with arg 0 running on thread \d+ <\d+>: ')),
+              mock.call(
+                  RegExp(r'qj: <pstar_test> .*: Task 1 with arg 1 running on thread \d+ <\d+>: ')),
+              mock.call(
+                  RegExp(r'qj: <pstar_test> .*: Task 2 with arg 2 running on thread \d+ <\d+>: ')),
+          ],
+          any_order=True)
+      self.assertEqual(mock_log_fn.call_count, num_tasks)
+      mock_log_fn.reset_mock()
+      self.assertEqual(foo.aslist(),
+                       out.aslist())
+
+    qj.LOG_FN = log_fn
+
+  @unittest.skip('slow')
+  def test_psplit_slow(self):
+    log_fn = qj.LOG_FN
+    with mock.patch('logging.info') as mock_log_fn:
+      qj.LOG_FN = mock_log_fn
+      qj.COLOR = False
+
+      num_tasks = 100
+
+      def make_lambda(i):
+        return lambda j: time.sleep(qj(random.random(), f'Task {i} with arg {j} sleeping on thread {threading.get_ident()}'))
+
+      foo = plist([make_lambda(i) for i in range(num_tasks)])
+      foo(foo.pfill(), psplit=1)
+
+      # Tests that each task is getting assigned the correct argument.
+      mock_log_fn.assert_has_calls(
+          [
+              mock.call(
+                  RegExp(r'qj: <pstar_test> .*: Task 0 with arg 0 sleeping on thread \d+ <\d+>: ')),
+              mock.call(
+                  RegExp(r'qj: <pstar_test> .*: Task 1 with arg 1 sleeping on thread \d+ <\d+>: ')),
+              mock.call(
+                  RegExp(r'qj: <pstar_test> .*: Task 2 with arg 2 sleeping on thread \d+ <\d+>: ')),
+          ],
+          any_order=True)
+      self.assertEqual(mock_log_fn.call_count, num_tasks)
+      mock_log_fn.reset_mock()
+
+    qj.LOG_FN = log_fn
 
   @unittest.skip('slow')
   def test_z_plist_of_pdict_timing(self):

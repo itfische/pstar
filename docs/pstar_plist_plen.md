@@ -66,4 +66,4 @@ assert (filtered.plen(-1, s=True) == 2)
 
 
 
-## [Source](../pstar/pstar.py#L5032-L5108)
+## [Source](../pstar/pstar.py#L5035-L5111)

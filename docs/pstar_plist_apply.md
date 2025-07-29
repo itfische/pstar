@@ -72,8 +72,9 @@ assert (by_bar_baz_apply_paslist_psplat.aslist() ==
 
 >    **`psplit`**: Integer (default `0`). If greater than `0`, `func` is
 >            applied in parallel. If `psplit` is `1`, the number of
->            parallel executions is equal to the length of `self`.
->            Otherwise, `psplit` is the number of parallel executions.
+>            parallel executions is equal to the length of `self` or the number
+>            of CPU cores - 2, whichever is smaller. Otherwise, `psplit` is the
+>            number of parallel executions.
 
 **Returns:**
 
@@ -81,4 +82,4 @@ assert (by_bar_baz_apply_paslist_psplat.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4036-L4157)
+## [Source](../pstar/pstar.py#L4037-L4160)
