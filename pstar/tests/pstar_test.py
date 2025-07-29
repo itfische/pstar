@@ -5063,40 +5063,40 @@ class PStarTest(unittest.TestCase):
   def test_from_docs_pstar_pstar(self):
     data = [dict(foo=[0, 1, 2], bar=dict(bin=0), baz=defaultdict(int, a=1, b=2, c=3)),
             dict(foo=[1, 2, 3], bar=dict(bin=1), baz=frozenset([3, 4, 5])),
-            dict(foo=[2, 3, 4], bar=dict(bin=0), baz=set([7, 8, 9]))]
+            dict(foo=(2, 3, 4), bar=dict(bin=0), baz=set([7, 8, 9]))]
     # Recursively convert all pstar-compatible types:
     pl = pstar(data)
     self.assertTrue(isinstance(pl, plist))
     self.assertTrue(pl.apply(type).aslist() == [pdict, pdict, pdict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, plist])
+    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, ptuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
     self.assertTrue(pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, pset])
     # An alternative way to do the same conversion:
     pl = pstar * data
     self.assertTrue(isinstance(pl, plist))
     self.assertTrue(pl.apply(type).aslist() == [pdict, pdict, pdict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, plist])
+    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, ptuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
     self.assertTrue(pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, pset])
     # Only convert the outermost object:
     pl = pstar + data
     self.assertTrue(isinstance(pl, plist))
     self.assertTrue(pl.apply(type).aslist() == [dict, dict, dict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, list])
+    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, tuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [dict, dict, dict])
     self.assertTrue(pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
     # The same outer conversion, as a function call:
     pl = pstar(data, depth=1)
     self.assertTrue(isinstance(pl, plist))
     self.assertTrue(pl.apply(type).aslist() == [dict, dict, dict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, list])
+    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, tuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [dict, dict, dict])
     self.assertTrue(pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
     # Convert two layers:
     pl = pstar(data, depth=2)
     self.assertTrue(isinstance(pl, plist))
     self.assertTrue(pl.apply(type).aslist() == [pdict, pdict, pdict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, list])
+    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, tuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [dict, dict, dict])
     self.assertTrue(pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
     pl = pstar * data
@@ -5105,7 +5105,7 @@ class PStarTest(unittest.TestCase):
     self.assertTrue(data2 == data)
     self.assertTrue(type(data2) == list)
     self.assertTrue([type(x) for x in data2] == [dict, dict, dict])
-    self.assertTrue([type(x['foo']) for x in data2] == [list, list, list])
+    self.assertTrue([type(x['foo']) for x in data2] == [list, list, tuple])
     self.assertTrue([type(x['bar']) for x in data2] == [dict, dict, dict])
     self.assertTrue([type(x['baz']) for x in data2] == [defaultdict, frozenset, set])
     # Only convert the outermost object:
@@ -5113,7 +5113,7 @@ class PStarTest(unittest.TestCase):
     self.assertTrue(data2 == data)
     self.assertTrue(type(data2) == list)
     self.assertTrue([type(x) for x in data2] == [pdict, pdict, pdict])
-    self.assertTrue([type(x['foo']) for x in data2] == [plist, plist, plist])
+    self.assertTrue([type(x['foo']) for x in data2] == [plist, plist, ptuple])
     self.assertTrue([type(x['bar']) for x in data2] == [pdict, pdict, pdict])
     self.assertTrue([type(x['baz']) for x in data2] == [defaultpdict, frozenpset, pset])
     # Convert inner objects even when outer objects have already been converted:
@@ -5121,7 +5121,7 @@ class PStarTest(unittest.TestCase):
     self.assertTrue(data3 == data)
     self.assertTrue(type(data3) == list)
     self.assertTrue([type(x) for x in data3] == [dict, dict, dict])
-    self.assertTrue([type(x['foo']) for x in data3] == [list, list, list])
+    self.assertTrue([type(x['foo']) for x in data3] == [list, list, tuple])
     self.assertTrue([type(x['bar']) for x in data3] == [dict, dict, dict])
     self.assertTrue([type(x['baz']) for x in data3] == [defaultdict, frozenset, set])
     d1 = {'foo': 1, 'bar': 2}
@@ -5135,19 +5135,19 @@ class PStarTest(unittest.TestCase):
     pl = plist * data
     self.assertTrue(isinstance(pl, plist))
     self.assertTrue(pl.apply(type).aslist() == [dict, dict, dict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, plist])
+    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, tuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [dict, dict, dict])
     self.assertTrue(pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
     data2 = data * pdict
     self.assertTrue(type(data2) == list)
     self.assertTrue(plist(data2).apply(type).aslist() == [pdict, pdict, pdict])
-    self.assertTrue(plist(data2).foo.apply(type).aslist() == [list, list, list])
+    self.assertTrue(plist(data2).foo.apply(type).aslist() == [list, list, tuple])
     self.assertTrue(plist(data2).bar.apply(type).aslist() == [pdict, pdict, pdict])
     self.assertTrue(plist(data2).baz.apply(type).aslist() == [defaultdict, frozenset, set])
     pl = plist + data * pdict
     self.assertTrue(type(pl) == plist)
     self.assertTrue(pl.apply(type).aslist() == [pdict, pdict, pdict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, list])
+    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, tuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
     self.assertTrue(pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
     try:
@@ -5157,17 +5157,17 @@ class PStarTest(unittest.TestCase):
     pl = plist + pdict * data
     self.assertTrue(type(pl) == plist)
     self.assertTrue(pl.apply(type).aslist() == [pdict, pdict, pdict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, list])
+    self.assertTrue(pl.foo.apply(type).aslist() == [list, list, tuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
     pl = plist * (pdict * data)
     self.assertTrue(type(pl) == plist)
     self.assertTrue(pl.apply(type).aslist() == [pdict, pdict, pdict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, plist])
+    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, tuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
     pl = pstar * data / pset
     self.assertTrue(isinstance(pl, plist))
     self.assertTrue(pl.apply(type).aslist() == [pdict, pdict, pdict])
-    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, plist])
+    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, ptuple])
     self.assertTrue(pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
     self.assertTrue(pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, set])
     # Starting from a nested pstar object, you may want to convert pdicts to dicts.
@@ -5224,6 +5224,39 @@ class PStarTest(unittest.TestCase):
     self.assertTrue(type(d['bar']) == set)
     self.assertTrue(type(d['baz']) == dict)
     foos = pstar.plist([pstar.pdict(foo=0, bar=0), pstar.pdict(foo=1, bar=1), pstar.pdict(foo=2, bar=0)])
+
+
+  def test_from_docs_pstar_pstar_convert_to_pstar_types(self):
+    data = [dict(foo=[0, 1, 2], bar=dict(bin=0), baz=defaultdict(int, a=1, b=2, c=3)),
+            dict(foo=[1, 2, 3], bar=dict(bin=1), baz=frozenset([3, 4, 5])),
+            dict(foo=[2, 3, 4], bar=dict(bin=0), baz=set([7, 8, 9]))]
+    # Recursively convert all pstar-compatible types:
+    pl = pstar.convert_to_pstar_types(data)
+    self.assertTrue(isinstance(pl, plist))
+    self.assertTrue(pl.apply(type).aslist() == [pdict, pdict, pdict])
+    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, plist])
+    self.assertTrue(pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
+    self.assertTrue(pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, pset])
+
+
+  def test_from_docs_pstar_pstar_convert_to_python_types(self):
+    data = [dict(foo=[0, 1, 2], bar=dict(bin=0), baz=defaultdict(int, a=1, b=2, c=3)),
+            dict(foo=[1, 2, 3], bar=dict(bin=1), baz=frozenset([3, 4, 5])),
+            dict(foo=[2, 3, 4], bar=dict(bin=0), baz=set([7, 8, 9]))]
+    # Recursively convert all pstar-compatible types:
+    pl = pstar.convert_to_pstar_types(data)
+    self.assertTrue(isinstance(pl, plist))
+    self.assertTrue(pl.apply(type).aslist() == [pdict, pdict, pdict])
+    self.assertTrue(pl.foo.apply(type).aslist() == [plist, plist, plist])
+    self.assertTrue(pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
+    self.assertTrue(pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, pset])
+    data2 = pstar.convert_to_python_types(pl)
+    self.assertTrue(data2 == data)
+    self.assertTrue(type(data2) == list)
+    self.assertTrue([type(x) for x in data2] == [dict, dict, dict])
+    self.assertTrue([type(x['foo']) for x in data2] == [list, list, list])
+    self.assertTrue([type(x['bar']) for x in data2] == [dict, dict, dict])
+    self.assertTrue([type(x['baz']) for x in data2] == [defaultdict, frozenset, set])
 
 
   def test_from_docs_pstar_ptuple(self):

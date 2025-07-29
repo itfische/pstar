@@ -5760,13 +5760,13 @@ class pstar(_compatible_metaclass(_Converter, object)):
   ```python
   data = [dict(foo=[0, 1, 2], bar=dict(bin=0), baz=defaultdict(int, a=1, b=2, c=3)),
           dict(foo=[1, 2, 3], bar=dict(bin=1), baz=frozenset([3, 4, 5])),
-          dict(foo=[2, 3, 4], bar=dict(bin=0), baz=set([7, 8, 9]))]
+          dict(foo=(2, 3, 4), bar=dict(bin=0), baz=set([7, 8, 9]))]
 
   # Recursively convert all pstar-compatible types:
   pl = pstar(data)
   assert (isinstance(pl, plist))
   assert (pl.apply(type).aslist() == [pdict, pdict, pdict])
-  assert (pl.foo.apply(type).aslist() == [plist, plist, plist])
+  assert (pl.foo.apply(type).aslist() == [plist, plist, ptuple])
   assert (pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
   assert (pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, pset])
 
@@ -5774,7 +5774,7 @@ class pstar(_compatible_metaclass(_Converter, object)):
   pl = pstar * data
   assert (isinstance(pl, plist))
   assert (pl.apply(type).aslist() == [pdict, pdict, pdict])
-  assert (pl.foo.apply(type).aslist() == [plist, plist, plist])
+  assert (pl.foo.apply(type).aslist() == [plist, plist, ptuple])
   assert (pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
   assert (pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, pset])
 
@@ -5782,7 +5782,7 @@ class pstar(_compatible_metaclass(_Converter, object)):
   pl = pstar + data
   assert (isinstance(pl, plist))
   assert (pl.apply(type).aslist() == [dict, dict, dict])
-  assert (pl.foo.apply(type).aslist() == [list, list, list])
+  assert (pl.foo.apply(type).aslist() == [list, list, tuple])
   assert (pl.bar.apply(type).aslist() == [dict, dict, dict])
   assert (pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
 
@@ -5790,7 +5790,7 @@ class pstar(_compatible_metaclass(_Converter, object)):
   pl = pstar(data, depth=1)
   assert (isinstance(pl, plist))
   assert (pl.apply(type).aslist() == [dict, dict, dict])
-  assert (pl.foo.apply(type).aslist() == [list, list, list])
+  assert (pl.foo.apply(type).aslist() == [list, list, tuple])
   assert (pl.bar.apply(type).aslist() == [dict, dict, dict])
   assert (pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
 
@@ -5798,7 +5798,7 @@ class pstar(_compatible_metaclass(_Converter, object)):
   pl = pstar(data, depth=2)
   assert (isinstance(pl, plist))
   assert (pl.apply(type).aslist() == [pdict, pdict, pdict])
-  assert (pl.foo.apply(type).aslist() == [list, list, list])
+  assert (pl.foo.apply(type).aslist() == [list, list, tuple])
   assert (pl.bar.apply(type).aslist() == [dict, dict, dict])
   assert (pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
 
@@ -5809,7 +5809,7 @@ class pstar(_compatible_metaclass(_Converter, object)):
   assert (data2 == data)
   assert (type(data2) == list)
   assert ([type(x) for x in data2] == [dict, dict, dict])
-  assert ([type(x['foo']) for x in data2] == [list, list, list])
+  assert ([type(x['foo']) for x in data2] == [list, list, tuple])
   assert ([type(x['bar']) for x in data2] == [dict, dict, dict])
   assert ([type(x['baz']) for x in data2] == [defaultdict, frozenset, set])
 
@@ -5818,7 +5818,7 @@ class pstar(_compatible_metaclass(_Converter, object)):
   assert (data2 == data)
   assert (type(data2) == list)
   assert ([type(x) for x in data2] == [pdict, pdict, pdict])
-  assert ([type(x['foo']) for x in data2] == [plist, plist, plist])
+  assert ([type(x['foo']) for x in data2] == [plist, plist, ptuple])
   assert ([type(x['bar']) for x in data2] == [pdict, pdict, pdict])
   assert ([type(x['baz']) for x in data2] == [defaultpdict, frozenpset, pset])
 
@@ -5827,7 +5827,7 @@ class pstar(_compatible_metaclass(_Converter, object)):
   assert (data3 == data)
   assert (type(data3) == list)
   assert ([type(x) for x in data3] == [dict, dict, dict])
-  assert ([type(x['foo']) for x in data3] == [list, list, list])
+  assert ([type(x['foo']) for x in data3] == [list, list, tuple])
   assert ([type(x['bar']) for x in data3] == [dict, dict, dict])
   assert ([type(x['baz']) for x in data3] == [defaultdict, frozenset, set])
   ```
@@ -5848,21 +5848,21 @@ class pstar(_compatible_metaclass(_Converter, object)):
   pl = plist * data
   assert (isinstance(pl, plist))
   assert (pl.apply(type).aslist() == [dict, dict, dict])
-  assert (pl.foo.apply(type).aslist() == [plist, plist, plist])
+  assert (pl.foo.apply(type).aslist() == [plist, plist, tuple])
   assert (pl.bar.apply(type).aslist() == [dict, dict, dict])
   assert (pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
 
   data2 = data * pdict
   assert (type(data2) == list)
   assert (plist(data2).apply(type).aslist() == [pdict, pdict, pdict])
-  assert (plist(data2).foo.apply(type).aslist() == [list, list, list])
+  assert (plist(data2).foo.apply(type).aslist() == [list, list, tuple])
   assert (plist(data2).bar.apply(type).aslist() == [pdict, pdict, pdict])
   assert (plist(data2).baz.apply(type).aslist() == [defaultdict, frozenset, set])
 
   pl = plist + data * pdict
   assert (type(pl) == plist)
   assert (pl.apply(type).aslist() == [pdict, pdict, pdict])
-  assert (pl.foo.apply(type).aslist() == [list, list, list])
+  assert (pl.foo.apply(type).aslist() == [list, list, tuple])
   assert (pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
   assert (pl.baz.apply(type).aslist() == [defaultdict, frozenset, set])
   ```
@@ -5881,13 +5881,13 @@ class pstar(_compatible_metaclass(_Converter, object)):
   pl = plist + pdict * data
   assert (type(pl) == plist)
   assert (pl.apply(type).aslist() == [pdict, pdict, pdict])
-  assert (pl.foo.apply(type).aslist() == [list, list, list])
+  assert (pl.foo.apply(type).aslist() == [list, list, tuple])
   assert (pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
 
   pl = plist * (pdict * data)
   assert (type(pl) == plist)
   assert (pl.apply(type).aslist() == [pdict, pdict, pdict])
-  assert (pl.foo.apply(type).aslist() == [plist, plist, plist])
+  assert (pl.foo.apply(type).aslist() == [plist, plist, tuple])
   assert (pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
   ```
 
@@ -5896,7 +5896,7 @@ class pstar(_compatible_metaclass(_Converter, object)):
   pl = pstar * data / pset
   assert (isinstance(pl, plist))
   assert (pl.apply(type).aslist() == [pdict, pdict, pdict])
-  assert (pl.foo.apply(type).aslist() == [plist, plist, plist])
+  assert (pl.foo.apply(type).aslist() == [plist, plist, ptuple])
   assert (pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
   assert (pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, set])
   ```
@@ -5995,6 +5995,58 @@ class pstar(_compatible_metaclass(_Converter, object)):
   plist = plist
   pset = pset
   ptuple = ptuple
+
+  @classmethod
+  def convert_to_pstar_types(cls, other):
+    """Recursively convert `other` to `pstar` types. The same as `pstar(other)` or `pstar * other`.
+
+    Examples:
+
+    ```python
+    data = [dict(foo=[0, 1, 2], bar=dict(bin=0), baz=defaultdict(int, a=1, b=2, c=3)),
+            dict(foo=[1, 2, 3], bar=dict(bin=1), baz=frozenset([3, 4, 5])),
+            dict(foo=[2, 3, 4], bar=dict(bin=0), baz=set([7, 8, 9]))]
+
+    # Recursively convert all pstar-compatible types:
+    pl = pstar.convert_to_pstar_types(data)
+    assert (isinstance(pl, plist))
+    assert (pl.apply(type).aslist() == [pdict, pdict, pdict])
+    assert (pl.foo.apply(type).aslist() == [plist, plist, plist])
+    assert (pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
+    assert (pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, pset])
+    ```
+    """
+    return other * cls
+  
+  @classmethod
+  def convert_to_python_types(cls, other):
+    """Recursively convert `other` to python types. The same as `other / pstar`.
+
+    Examples:
+
+    ```python
+    data = [dict(foo=[0, 1, 2], bar=dict(bin=0), baz=defaultdict(int, a=1, b=2, c=3)),
+            dict(foo=[1, 2, 3], bar=dict(bin=1), baz=frozenset([3, 4, 5])),
+            dict(foo=[2, 3, 4], bar=dict(bin=0), baz=set([7, 8, 9]))]
+
+    # Recursively convert all pstar-compatible types:
+    pl = pstar.convert_to_pstar_types(data)
+    assert (isinstance(pl, plist))
+    assert (pl.apply(type).aslist() == [pdict, pdict, pdict])
+    assert (pl.foo.apply(type).aslist() == [plist, plist, plist])
+    assert (pl.bar.apply(type).aslist() == [pdict, pdict, pdict])
+    assert (pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, pset])
+
+    data2 = pstar.convert_to_python_types(pl)
+    assert (data2 == data)
+    assert (type(data2) == list)
+    assert ([type(x) for x in data2] == [dict, dict, dict])
+    assert ([type(x['foo']) for x in data2] == [list, list, list])
+    assert ([type(x['bar']) for x in data2] == [dict, dict, dict])
+    assert ([type(x['baz']) for x in data2] == [defaultdict, frozenset, set])
+    ```
+    """
+    return other / cls
 
 
 # pylint: enable=line-too-long,invalid-name,g-explicit-length-test

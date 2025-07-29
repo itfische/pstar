@@ -1086,6 +1086,14 @@ ____
 
 Recursively converts between standard python types and pstar types.
 
+### [`pstar.pstar.convert_to_pstar_types(other)`](./pstar_pstar_convert_to_pstar_types.md)
+
+Recursively convert `other` to [`pstar`](./pstar.md) types. The same as `pstar(other)` or `pstar * other`.
+
+### [`pstar.pstar.convert_to_python_types(other)`](./pstar_pstar_convert_to_python_types.md)
+
+Recursively convert `other` to python types. The same as `other / pstar`.
+
 ____
 
 ### [`pstar.ptuple(iterable=(), /)`](./pstar_ptuple.md)
