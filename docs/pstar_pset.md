@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).`pset(set)`
+# [`pstar`](./pstar.md).`pset(iterable=(), /)`
 
 Placeholder `set` subclass. Mostly unimplemented.
 

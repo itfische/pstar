@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).`frozenpset(frozenset)`
+# [`pstar`](./pstar.md).`frozenpset(iterable=(), /)`
 
 Placeholder `frozenset` subclass. Mostly unimplemented.
 

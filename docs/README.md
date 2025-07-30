@@ -758,7 +758,7 @@ Update `self`. **Returns `self` to allow chaining.**
 
 ____
 
-### [`pstar.frozenpset(frozenset)`](./pstar_frozenpset.md)
+### [`pstar.frozenpset(iterable=(), /)`](./pstar_frozenpset.md)
 
 Placeholder `frozenset` subclass. Mostly unimplemented.
 
@@ -1076,7 +1076,7 @@ Zips `self` with `others`, recursively.
 
 ____
 
-### [`pstar.pset(set)`](./pstar_pset.md)
+### [`pstar.pset(iterable=(), /)`](./pstar_pset.md)
 
 Placeholder `set` subclass. Mostly unimplemented.
 
