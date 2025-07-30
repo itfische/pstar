@@ -2004,7 +2004,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     Examples:
 
     A `plist` of `list`s has `append` methods at two levels -- the `plist`
-    and the contained `list`s. To chose `list.append` them, you can add
+    and the contained `list`s. To chose `list.append` then, you can add
     an '_' to the method name:
     ```python
     pl = plist[[1, 2, 3], [4, 5, 6]]
@@ -2121,6 +2121,18 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     if name in NONCALLABLE_ATTRS or name in  ['_', '__']:
       return wrap()
 
+    if name == 'pget':
+      # This is the magic of pget. We get the result, which is a bunch of `self`s at some pepth,
+      # and then we set the __pepth__ value back to the correct one. Compare this with the
+      # `_` and `__` functions, where they know the particular __pepth__ that the next call
+      # needs to happen at, so they can just set it on `self` before returning. With `pget`,
+      # the function doesn't know what the correct value is for the __pepth__, but we know
+      # the correct value here. This is what allows us to say things like:
+      # `pl.pget_[0:3:2]` and have it do the right thing.
+      ret = wrap()
+      ret.__pepth__ = _pepth
+      return ret
+
     return wrap
 
   def __getitem__(self, key):
@@ -2177,6 +2189,24 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     pl = pl.np()
     assert (pl._[[True, False, True]].apply(list).aslist() ==
             [[1, 3], [4, 6], [7, 9]])
+    ```
+
+    If you need to programmatically index into an interior plist, you can do so
+    by using passing the `pepth` argument explicitly. For example:
+    ```python
+    pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+    assert (pl.__getitem__(0, pepth=1).aslist() ==
+            [[1, 2, 3], [7, 8, 9], [10, 11]])
+    assert (pl.__getitem__(0, pepth=2).aslist() ==
+            [[1, 4], [7], [10, 12]])
+    ```
+    This approach works with all the indexing options above, but if you want to
+    use slices, you have to explicitly create the slice:
+    ```python
+    pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+    # `slice(0, 3, 2)` is equivalent to the `[0:3:2]` syntax:
+    assert (pl.__getitem__(slice(0, 3, 2), pepth=1).aslist() ==
+            [[[1, 2, 3]], [[7, 8, 9]], [[10, 11]]])
     ```
 
     Args:
@@ -3215,6 +3245,85 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       `self` occurs at the innermost `plist`.
     """
     self.__pepth__ = self.pdepth(True)
+    return self
+
+  def pget(self):
+    """Causes the next call to `self` to be performed at whatever depth is indicated by `pget`'s trailing underscores.
+
+    `pget` complements `_` and `__`, which don't allow you to control the depth the next call occurs at.
+
+    Note that to enable subscripting, the only way to specify the depth is with the number of trailing underscores.
+    If you need to programmatically index into an interior plist, use `plist.__getitem__`, passing the `pepth` argument
+    explicitly. For example:
+    ```python
+    pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+    assert (pl.__getitem__(0, pepth=1).aslist() ==
+            [[1, 2, 3], [7, 8, 9], [10, 11]])
+    assert (pl.__getitem__(0, pepth=2).aslist() ==
+            [[1, 4], [7], [10, 12]])
+    ```
+
+    Examples:
+
+    Indexing into the `plist` itself (there's no point in doing this, but it works):
+    ```python
+    foos = plist([pdict(foo=0, bar=0), pdict(foo=1, bar=1), pdict(foo=2, bar=0)])
+
+    # With no underscores, acts just like `self`:
+    assert (foos[0] ==
+            foos.pget[0])
+    assert (foos[:2].aslist() ==
+            foos.pget[:2].aslist())
+    assert (foos[[0, 2]].aslist() ==
+            foos.pget[[0, 2]].aslist())
+    ```
+
+    Indexing into the interior of the `plist`:
+    ```python
+    pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+
+    # Basic scalar indexing:
+    assert (pl[0].aslist() ==
+            pl.pget[0].aslist())
+    assert (pl.pget_[0].aslist() ==
+            [[1, 2, 3], [7, 8, 9], [10, 11]])
+    assert (pl.pget__[0].aslist() ==
+            [[1, 4], [7], [10, 12]])
+    # At the deepest level, `pget` is equivalent to `_` or `__`, depending on the contents of the innermost `plist`:
+    assert (pl.pget__[0].aslist() ==
+            pl._[0].aslist())
+    # In this case, all three are the same:
+    assert (pl.pget__[0].aslist() ==
+            pl.__[0].aslist())
+
+    try:
+      # If you go too deep, it throws an exception:
+      pl.pget___[0]
+      assert False
+    except Exception:
+      assert True
+
+    # slicing
+    assert (pl.pget_[0:3:2].aslist() ==
+            [[[1, 2, 3]], [[7, 8, 9]], [[10, 11]]])
+
+    # tuple indexing
+    assert (pl.filter_(lambda x: len(x) > 1).pget_[(1, 0)].aslist() ==
+            [[(2, 1), (5, 4)], [(8, 7)], [(11, 10)]])
+
+    # list indexing
+    assert (pl.pget_[[0]].aslist() ==
+            [[[1, 2, 3]], [[7, 8, 9]], [[10, 11]]])
+    assert (pl.pget_[[0]].pget__[[1, 0]].aslist() ==
+            [[[2, 1]], [[8, 7]], [[11, 10]]])
+    ```
+
+    Returns:
+      `self`, but in a state such that the next access to a property or method of
+      `self` occurs at some deeper level in `self`.
+    """
+    # See the comment in `__getattr__` above to understand how this works.
+    # (Search for 'pget', with the quotes.)
     return self
 
   ##############################################################################

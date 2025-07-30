@@ -46,4 +46,4 @@ assert (by_bar_baz.ungroup(-1).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4580-L4644)
+## [Source](../pstar/pstar.py#L4690-L4754)

@@ -55,6 +55,24 @@ assert (pl._[[True, False, True]].apply(list).aslist() ==
         [[1, 3], [4, 6], [7, 9]])
 ```
 
+If you need to programmatically index into an interior plist, you can do so
+by using passing the `pepth` argument explicitly. For example:
+```python
+pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+assert (pl.__getitem__(0, pepth=1).aslist() ==
+        [[1, 2, 3], [7, 8, 9], [10, 11]])
+assert (pl.__getitem__(0, pepth=2).aslist() ==
+        [[1, 4], [7], [10, 12]])
+```
+This approach works with all the indexing options above, but if you want to
+use slices, you have to explicitly create the slice:
+```python
+pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+# `slice(0, 3, 2)` is equivalent to the `[0:3:2]` syntax:
+assert (pl.__getitem__(slice(0, 3, 2), pepth=1).aslist() ==
+        [[[1, 2, 3]], [[7, 8, 9]], [[10, 11]]])
+```
+
 **Args:**
 
 >    **`key`**: The key to index by.
@@ -87,4 +105,4 @@ assert (pl._[[True, False, True]].apply(list).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2126-L2233)
+## [Source](../pstar/pstar.py#L2138-L2263)

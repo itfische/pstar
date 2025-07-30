@@ -17,7 +17,7 @@ return `name` as an index of each element (`[x[name] for x in self]`).
 **Examples:**
 
 A [`plist`](./pstar_plist.md) of `list`s has `append` methods at two levels -- the [`plist`](./pstar_plist.md)
-and the contained `list`s. To chose `list.append` them, you can add
+and the contained `list`s. To chose `list.append` then, you can add
 an '_' to the method name:
 ```python
 pl = plist[[1, 2, 3], [4, 5, 6]]

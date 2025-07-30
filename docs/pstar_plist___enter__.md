@@ -19,4 +19,4 @@ assert (len(texts.all(isinstance, str)) >= 1)
 
 
 
-## [Source](../pstar/pstar.py#L3075-L3093)
+## [Source](../pstar/pstar.py#L3105-L3123)

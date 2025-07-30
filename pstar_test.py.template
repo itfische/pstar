@@ -350,27 +350,10 @@ class PStarTest(unittest.TestCase):
     self.assertEqual(pl[1:],
                      [[1, 2, 3],
                       [2, 4, 6]])
-    if sys.version_info[0] < 3:
-      self.assertEqual(pl._[1::1].aslist(),
-                       [[0, 0],
-                        [2, 3],
-                        [4, 6]])
-      if '__warned__' in plist.__getslice__.__dict__:
-        del plist.__getslice__.__dict__['__warned__']
-      log_fn = qj.LOG_FN
-      with mock.patch('logging.info') as mock_log_fn:
-        qj.LOG_FN = mock_log_fn
-        qj.COLOR = False
-        pl._[1:]
-        mock_log_fn.assert_called_once_with(RegExp('qj: <pstar> __getslice__: WARNING!'))
-
-      qj.LOG_FN = log_fn
-      qj.COLOR = True
-    else:
-      self.assertEqual(pl._[1:].aslist(),
-                       [[0, 0],
-                        [2, 3],
-                        [4, 6]])
+    self.assertEqual(pl._[1:].aslist(),
+                      [[0, 0],
+                      [2, 3],
+                      [4, 6]])
 
   def test_plist_all_any_none(self):
     foos = plist([pdict(foo=i, bar=i % 3) for i in range(5)])
@@ -1147,6 +1130,48 @@ class PStarTest(unittest.TestCase):
     self.assertEqual(by_bar_baz.ungroup().root().aslist(),
                      [[{'baz': 6, 'foo': 1, 'bar': 1}, {'baz': 6, 'foo': 3, 'bar': 1}],
                       [{'baz': 1, 'foo': 2, 'bar': 0}, {'baz': 2, 'foo': 4, 'bar': 0}, {'baz': 3, 'foo': 0, 'bar': 0}]])
+
+  def test_plist_of_pdict_groupby_groupby_filter_ungroup_nonempty(self):
+    foos = plist([pdict(foo=0, bar=0), pdict(foo=1, bar=1), pdict(foo=2, bar=0), pdict(foo=3, bar=1), pdict(foo=4, bar=0)])
+    by_bar = foos.bar.sortby().groupby()
+
+    by_bar[0].baz = 6
+    by_bar[1].baz = by_bar[1].foo * 2
+    by_bar_baz = by_bar.baz.groupby()
+
+    filtered_by_bar_baz = by_bar_baz.foo != 3
+    self.assertEqual(filtered_by_bar_baz.aslist(),
+                     [[[{'bar': 0, 'baz': 6, 'foo': 0}, {'bar': 0, 'baz': 6, 'foo': 2}, {'bar': 0, 'baz': 6, 'foo': 4}]],
+                      [[{'bar': 1, 'baz': 2, 'foo': 1}], []]])
+
+    nonempty_filtered_by_bar_baz = filtered_by_bar_baz.nonempty()
+    self.assertEqual(filtered_by_bar_baz.aslist(),
+                     nonempty_filtered_by_bar_baz.aslist())
+
+    nonempty_filtered_by_bar_baz = filtered_by_bar_baz.nonempty_()
+    self.assertEqual(nonempty_filtered_by_bar_baz.aslist(),
+                     [[[{'bar': 0, 'baz': 6, 'foo': 0}, {'bar': 0, 'baz': 6, 'foo': 2}, {'bar': 0, 'baz': 6, 'foo': 4}]],
+                      [[{'bar': 1, 'baz': 2, 'foo': 1}]]])
+
+    nonempty_filtered_by_bar_baz = filtered_by_bar_baz.nonempty__()
+    self.assertEqual(filtered_by_bar_baz.aslist(),
+                     nonempty_filtered_by_bar_baz.aslist())
+    
+    self.assertEqual(filtered_by_bar_baz.ungroup(-1).aslist(),
+                     filtered_by_bar_baz.nonempty_().ungroup(-1).aslist())
+
+    filtered_by_bar_baz = by_bar_baz.foo != 1
+    self.assertEqual(filtered_by_bar_baz.aslist(),
+                     [[[{'bar': 0, 'baz': 6, 'foo': 0}, {'bar': 0, 'baz': 6, 'foo': 2}, {'bar': 0, 'baz': 6, 'foo': 4}]],
+                      [[], [{'bar': 1, 'baz': 6, 'foo': 3}]]])
+
+    nonempty_filtered_by_bar_baz = filtered_by_bar_baz.nonempty_()
+    self.assertEqual(nonempty_filtered_by_bar_baz.aslist(),
+                     [[[{'bar': 0, 'baz': 6, 'foo': 0}, {'bar': 0, 'baz': 6, 'foo': 2}, {'bar': 0, 'baz': 6, 'foo': 4}]],
+                      [[{'bar': 1, 'baz': 6, 'foo': 3}]]])
+
+    self.assertEqual(filtered_by_bar_baz.ungroup(-1).aslist(),
+                     filtered_by_bar_baz.nonempty_().ungroup(-1).aslist())
 
   def test_plist_of_pdict_groupby_groupby_values_like(self):
     foos = plist([pdict(foo=i, bar=i % 2) for i in range(5)])

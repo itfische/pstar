@@ -59,4 +59,4 @@ assert (all_the_same_dict ==
 
 
 
-## [Source](../pstar/pstar.py#L5376-L5438)
+## [Source](../pstar/pstar.py#L5486-L5548)

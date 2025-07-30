@@ -364,6 +364,10 @@ Shortcutting recursive equality function.
 
 Returns a [`plist`](./pstar_plist.md) with the structure of `self` filled in order from `v`.
 
+### [`pstar.plist.pget(self)`](./pstar_plist_pget.md)
+
+Causes the next call to `self` to be performed at whatever depth is indicated by [`pget`](./pstar_plist_pget.md)'s trailing underscores.
+
 ### [`pstar.plist.pleft(self)`](./pstar_plist_pleft.md)
 
 Returns a [`plist`](./pstar_plist.md) with the structure of `self` filled `plen(-1)` to 0.
@@ -440,4 +444,4 @@ Adds and returns an outer [`plist`](./pstar_plist.md) around `self`.
 
 Zips `self` with `others`, recursively.
 
-## [Source](../pstar/pstar.py#L1747-L5659)
+## [Source](../pstar/pstar.py#L1747-L5769)

@@ -350,27 +350,10 @@ class PStarTest(unittest.TestCase):
     self.assertEqual(pl[1:],
                      [[1, 2, 3],
                       [2, 4, 6]])
-    if sys.version_info[0] < 3:
-      self.assertEqual(pl._[1::1].aslist(),
-                       [[0, 0],
-                        [2, 3],
-                        [4, 6]])
-      if '__warned__' in plist.__getslice__.__dict__:
-        del plist.__getslice__.__dict__['__warned__']
-      log_fn = qj.LOG_FN
-      with mock.patch('logging.info') as mock_log_fn:
-        qj.LOG_FN = mock_log_fn
-        qj.COLOR = False
-        pl._[1:]
-        mock_log_fn.assert_called_once_with(RegExp('qj: <pstar> __getslice__: WARNING!'))
-
-      qj.LOG_FN = log_fn
-      qj.COLOR = True
-    else:
-      self.assertEqual(pl._[1:].aslist(),
-                       [[0, 0],
-                        [2, 3],
-                        [4, 6]])
+    self.assertEqual(pl._[1:].aslist(),
+                      [[0, 0],
+                      [2, 3],
+                      [4, 6]])
 
   def test_plist_all_any_none(self):
     foos = plist([pdict(foo=i, bar=i % 3) for i in range(5)])
@@ -1147,6 +1130,48 @@ class PStarTest(unittest.TestCase):
     self.assertEqual(by_bar_baz.ungroup().root().aslist(),
                      [[{'baz': 6, 'foo': 1, 'bar': 1}, {'baz': 6, 'foo': 3, 'bar': 1}],
                       [{'baz': 1, 'foo': 2, 'bar': 0}, {'baz': 2, 'foo': 4, 'bar': 0}, {'baz': 3, 'foo': 0, 'bar': 0}]])
+
+  def test_plist_of_pdict_groupby_groupby_filter_ungroup_nonempty(self):
+    foos = plist([pdict(foo=0, bar=0), pdict(foo=1, bar=1), pdict(foo=2, bar=0), pdict(foo=3, bar=1), pdict(foo=4, bar=0)])
+    by_bar = foos.bar.sortby().groupby()
+
+    by_bar[0].baz = 6
+    by_bar[1].baz = by_bar[1].foo * 2
+    by_bar_baz = by_bar.baz.groupby()
+
+    filtered_by_bar_baz = by_bar_baz.foo != 3
+    self.assertEqual(filtered_by_bar_baz.aslist(),
+                     [[[{'bar': 0, 'baz': 6, 'foo': 0}, {'bar': 0, 'baz': 6, 'foo': 2}, {'bar': 0, 'baz': 6, 'foo': 4}]],
+                      [[{'bar': 1, 'baz': 2, 'foo': 1}], []]])
+
+    nonempty_filtered_by_bar_baz = filtered_by_bar_baz.nonempty()
+    self.assertEqual(filtered_by_bar_baz.aslist(),
+                     nonempty_filtered_by_bar_baz.aslist())
+
+    nonempty_filtered_by_bar_baz = filtered_by_bar_baz.nonempty_()
+    self.assertEqual(nonempty_filtered_by_bar_baz.aslist(),
+                     [[[{'bar': 0, 'baz': 6, 'foo': 0}, {'bar': 0, 'baz': 6, 'foo': 2}, {'bar': 0, 'baz': 6, 'foo': 4}]],
+                      [[{'bar': 1, 'baz': 2, 'foo': 1}]]])
+
+    nonempty_filtered_by_bar_baz = filtered_by_bar_baz.nonempty__()
+    self.assertEqual(filtered_by_bar_baz.aslist(),
+                     nonempty_filtered_by_bar_baz.aslist())
+    
+    self.assertEqual(filtered_by_bar_baz.ungroup(-1).aslist(),
+                     filtered_by_bar_baz.nonempty_().ungroup(-1).aslist())
+
+    filtered_by_bar_baz = by_bar_baz.foo != 1
+    self.assertEqual(filtered_by_bar_baz.aslist(),
+                     [[[{'bar': 0, 'baz': 6, 'foo': 0}, {'bar': 0, 'baz': 6, 'foo': 2}, {'bar': 0, 'baz': 6, 'foo': 4}]],
+                      [[], [{'bar': 1, 'baz': 6, 'foo': 3}]]])
+
+    nonempty_filtered_by_bar_baz = filtered_by_bar_baz.nonempty_()
+    self.assertEqual(nonempty_filtered_by_bar_baz.aslist(),
+                     [[[{'bar': 0, 'baz': 6, 'foo': 0}, {'bar': 0, 'baz': 6, 'foo': 2}, {'bar': 0, 'baz': 6, 'foo': 4}]],
+                      [[{'bar': 1, 'baz': 6, 'foo': 3}]]])
+
+    self.assertEqual(filtered_by_bar_baz.ungroup(-1).aslist(),
+                     filtered_by_bar_baz.nonempty_().ungroup(-1).aslist())
 
   def test_plist_of_pdict_groupby_groupby_values_like(self):
     foos = plist([pdict(foo=i, bar=i % 2) for i in range(5)])
@@ -3736,6 +3761,15 @@ class PStarTest(unittest.TestCase):
     pl = pl.np()
     self.assertTrue(pl._[[True, False, True]].apply(list).aslist() ==
             [[1, 3], [4, 6], [7, 9]])
+    pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+    self.assertTrue(pl.__getitem__(0, pepth=1).aslist() ==
+            [[1, 2, 3], [7, 8, 9], [10, 11]])
+    self.assertTrue(pl.__getitem__(0, pepth=2).aslist() ==
+            [[1, 4], [7], [10, 12]])
+    pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+    # `slice(0, 3, 2)` is equivalent to the `[0:3:2]` syntax:
+    self.assertTrue(pl.__getitem__(slice(0, 3, 2), pepth=1).aslist() ==
+            [[[1, 2, 3]], [[7, 8, 9]], [[10, 11]]])
 
 
   def test_from_docs_pstar_plist___getslice__(self):
@@ -4505,6 +4539,53 @@ class PStarTest(unittest.TestCase):
              [[]]])
     self.assertTrue(filtered.pfill(3).aslist() ==
             [[[3], [4]], [[]]])
+
+
+  def test_from_docs_pstar_plist_pget(self):
+    pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+    self.assertTrue(pl.__getitem__(0, pepth=1).aslist() ==
+            [[1, 2, 3], [7, 8, 9], [10, 11]])
+    self.assertTrue(pl.__getitem__(0, pepth=2).aslist() ==
+            [[1, 4], [7], [10, 12]])
+    foos = plist([pdict(foo=0, bar=0), pdict(foo=1, bar=1), pdict(foo=2, bar=0)])
+    # With no underscores, acts just like `self`:
+    self.assertTrue(foos[0] ==
+            foos.pget[0])
+    self.assertTrue(foos[:2].aslist() ==
+            foos.pget[:2].aslist())
+    self.assertTrue(foos[[0, 2]].aslist() ==
+            foos.pget[[0, 2]].aslist())
+    pl = plist * [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]], [[10, 11], [12]]]
+    # Basic scalar indexing:
+    self.assertTrue(pl[0].aslist() ==
+            pl.pget[0].aslist())
+    self.assertTrue(pl.pget_[0].aslist() ==
+            [[1, 2, 3], [7, 8, 9], [10, 11]])
+    self.assertTrue(pl.pget__[0].aslist() ==
+            [[1, 4], [7], [10, 12]])
+    # At the deepest level, `pget` is equivalent to `_` or `__`, depending on the contents of the innermost `plist`:
+    self.assertTrue(pl.pget__[0].aslist() ==
+            pl._[0].aslist())
+    # In this case, all three are the same:
+    self.assertTrue(pl.pget__[0].aslist() ==
+            pl.__[0].aslist())
+    try:
+      # If you go too deep, it throws an exception:
+      pl.pget___[0]
+      assert False
+    except Exception:
+      assert True
+    # slicing
+    self.assertTrue(pl.pget_[0:3:2].aslist() ==
+            [[[1, 2, 3]], [[7, 8, 9]], [[10, 11]]])
+    # tuple indexing
+    self.assertTrue(pl.filter_(lambda x: len(x) > 1).pget_[(1, 0)].aslist() ==
+            [[(2, 1), (5, 4)], [(8, 7)], [(11, 10)]])
+    # list indexing
+    self.assertTrue(pl.pget_[[0]].aslist() ==
+            [[[1, 2, 3]], [[7, 8, 9]], [[10, 11]]])
+    self.assertTrue(pl.pget_[[0]].pget__[[1, 0]].aslist() ==
+            [[[2, 1]], [[8, 7]], [[11, 10]]])
 
 
   def test_from_docs_pstar_plist_pleft(self):
