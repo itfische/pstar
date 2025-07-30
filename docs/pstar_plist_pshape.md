@@ -47,4 +47,4 @@ assert (filtered.pshape().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L5222-L5271)
+## [Source](../pstar/pstar.py#L5221-L5270)

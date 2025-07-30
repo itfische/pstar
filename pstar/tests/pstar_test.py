@@ -22,6 +22,7 @@ from collections import defaultdict
 import os
 import random
 import re
+import resource
 import shutil
 import sys
 import tempfile
@@ -3004,9 +3005,9 @@ class PStarTest(unittest.TestCase):
                       [[(1, 2, 7), (3, 2, 7)]]])
 
   def test_fast_parallel_file_processing(self):
-    import resource
     soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-    resource.setrlimit(resource.RLIMIT_NOFILE, (4096, hard))
+    new_soft = min(hard, max(soft, 4096))
+    resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))
 
     tdir = tempfile.mkdtemp()
     try:
@@ -3023,6 +3024,7 @@ class PStarTest(unittest.TestCase):
                        contents.aslist())
     finally:
       shutil.rmtree(tdir, ignore_errors=True)
+      resource.setrlimit(resource.RLIMIT_NOFILE, (soft, hard))
 
   def test_psplit_fast(self):
     log_fn = qj.LOG_FN

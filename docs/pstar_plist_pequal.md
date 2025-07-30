@@ -36,4 +36,4 @@ assert (foos.pequal(zero_bars) == False)
 
 
 
-## [Source](../pstar/pstar.py#L4097-L4143)
+## [Source](../pstar/pstar.py#L4096-L4142)

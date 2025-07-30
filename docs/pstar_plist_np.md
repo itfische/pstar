@@ -46,4 +46,4 @@ assert ((by_bar.foo.np() * by_bar.baz.np() - by_bar.bin.np()).sum().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L3575-L3618)
+## [Source](../pstar/pstar.py#L3574-L3617)

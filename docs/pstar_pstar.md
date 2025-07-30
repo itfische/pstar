@@ -247,4 +247,4 @@ Recursively convert `other` to [`pstar`](./pstar.md) types. The same as `pstar(o
 
 Recursively convert `other` to python types. The same as `other / pstar`.
 
-## [Source](../pstar/pstar.py#L5864-L6160)
+## [Source](../pstar/pstar.py#L5863-L6159)

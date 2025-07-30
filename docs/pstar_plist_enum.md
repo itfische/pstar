@@ -20,4 +20,4 @@ assert (by_bar.foo.enum_().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4564-L4583)
+## [Source](../pstar/pstar.py#L4563-L4582)

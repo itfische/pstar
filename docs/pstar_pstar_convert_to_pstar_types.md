@@ -20,4 +20,4 @@ assert (pl.baz.apply(type).aslist() == [defaultpdict, frozenpset, pset])
 
 
 
-## [Source](../pstar/pstar.py#L6109-L6130)
+## [Source](../pstar/pstar.py#L6108-L6129)

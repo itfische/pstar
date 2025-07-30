@@ -28,4 +28,4 @@ assert ([type(x['baz']) for x in data2] == [defaultdict, frozenset, set])
 
 
 
-## [Source](../pstar/pstar.py#L6131-L6160)
+## [Source](../pstar/pstar.py#L6130-L6159)
