@@ -17,7 +17,7 @@ import setuptools
 
 
 def readme():
-  return '`pstar` documentation and source code can be found at https://github.com/iansf/pstar.'
+  return '`pstar` documentation and source code can be found at https://github.com/itfische/pstar.'
 
 
 def version():
