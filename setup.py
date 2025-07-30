@@ -21,7 +21,7 @@ def readme():
 
 
 def version():
-  return '0.2.0'
+  return '1.0.0'
 
 
 setuptools.setup(
@@ -32,11 +32,9 @@ setuptools.setup(
     version=version(),
     url='https://github.com/itfische/pstar',
     download_url='https://github.com/itfische/pstar/archive/%s.tar.gz' % version(),
-    author='Ian Fischer, Google',
-    author_email='iansf@google.com',
+    author='Ian Fischer',
+    author_email='itfische@gmail.com',
     packages=['pstar'],
     license='Apache 2.0',
     install_requires=['qj'],
-    test_suite='nose.collector',
-    tests_require=['matplotlib', 'mock', 'nose'],
 )
