@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pleft(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pleft(self) -> 'Self'`
 
 Returns a [`plist`](./pstar_plist.md) with the structure of `self` filled `plen(-1)` to 0.
 
@@ -61,4 +61,4 @@ by_bar_baz_bin.foo.apply(plot, by_bar_baz_bin.pleft(pepth=2), pepth=2)
 
 
 
-## [Source](../pstar/pstar.py#L5424-L5484)
+## [Source](../pstar/pstar.py#L5498-L5558)

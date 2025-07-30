@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__delitem__(self, key)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__delitem__(self, key: 'Any') -> 'Self'`
 
 Deletes items of `self` using a variety of indexing styles.
 
@@ -94,4 +94,4 @@ assert (pl.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2624-L2745)
+## [Source](../pstar/pstar.py#L2635-L2756)

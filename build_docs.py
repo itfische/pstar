@@ -101,6 +101,8 @@ def bread_crumbs(symbol):
 
 
 def full_signature(symbol):
+  if symbol.is_property:
+    return '# @property %s' % bread_crumbs(symbol)
   return '# %s' % bread_crumbs(symbol)
 
 
@@ -254,13 +256,14 @@ def source_for(obj):
   return '../%s#L%d-L%d' % (filename, lines[1], lines[1] + len(lines[0]))
 
 
-def symbol_for(obj, name):
+def symbol_for(obj, name, is_property):
   symbol = symbols[name]
   symbol.name = name
   symbol.signature = signature_for(obj)
   symbol.source = source_for(obj)
   symbol[['doc', 'short_doc']] = docs_for(obj)
   symbol.tests = tests_for(symbol)
+  symbol.is_property = is_property
   return symbol
 
 
@@ -274,12 +277,17 @@ def process_template(template, symbol):
 
 def collect_docs_and_tests(obj, base_name, full_base_name):
   try:
+    is_property = False
+    if isinstance(obj, property):
+      obj = obj.fget
+      is_property = True
+
     full_name = '.'.join(plist[full_base_name, obj.__name__] != '')
     if (not obj.__name__.startswith(base_name) and not obj.__module__.startswith(base_name)) or full_name in SKIP_SYMBOLS:
       return
     if full_name in symbols:
       raise RuntimeError('Found duplicate symbol: %s' % full_name)
-    symbol_for(obj, full_name)
+    symbol_for(obj, full_name, is_property=is_property)
     (public_symbols_for(obj) != obj).apply(collect_docs_and_tests, base_name, full_name)
   except AttributeError as e:
     # qj(str(e), 'Error processing %s' % str(obj))

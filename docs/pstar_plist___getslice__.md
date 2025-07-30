@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__getslice__(self, i, j)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__getslice__(self, i: 'int', j: 'int') -> 'Self'`
 
 Delegates to [`__getitem__`](./pstar_plist___getitem__.md) whenever possible. For compatibility with python 2.7.
 
@@ -42,4 +42,4 @@ assert (pl._[:2].aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2264-L2317)
+## [Source](../pstar/pstar.py#L2275-L2328)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`me(self, name_or_plist='me', call_pepth=0)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`me(self, name_or_plist: 'str | Self' = 'me', call_pepth: 'int' = 0) -> 'Self'`
 
 Sets the current plist as a variable available in the caller's context.
 
@@ -47,8 +47,8 @@ the caller's `globals()` `dict` under the requested name. The following both
 work if there are no local or global variables named `me` or `baz`:
 ```python
 def new_context():
-  foos.bar.groupby().baz.sortby_().groupby().me().foo.plt().plot(me.baz)
-  foos.bar.groupby().baz.sortby_().groupby().me('baz').foo.plt().plot(baz.baz)
+  foos.bar.groupby().baz.sortby_().groupby().me().foo.plt().plot(me.baz)  # pyright: ignore[reportUndefinedVariable]
+  foos.bar.groupby().baz.sortby_().groupby().me('baz').foo.plt().plot(baz.baz)  # pyright: ignore[reportUndefinedVariable]
   del globals()['me']
   del globals()['baz']
 new_context()
@@ -78,4 +78,4 @@ new_context()
 
 
 
-## [Source](../pstar/pstar.py#L5551-L5654)
+## [Source](../pstar/pstar.py#L5625-L5731)

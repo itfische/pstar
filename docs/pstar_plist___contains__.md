@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__contains__(self, other)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__contains__(self, other: 'Any') -> 'bool'`
 
 Implements the `in` operator to avoid inappropriate use of [`plist`](./pstar_plist.md) comparators.
 
@@ -19,4 +19,4 @@ assert (dict(foo=0, bar=0) in by_bar)
 
 
 
-## [Source](../pstar/pstar.py#L2957-L2986)
+## [Source](../pstar/pstar.py#L2968-L2997)

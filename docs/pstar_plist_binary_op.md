@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`binary_op(self, other)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`binary_op(self, other: 'Any') -> 'plist'`
 
 [`plist`](./pstar_plist.md) binary operation; applied element-wise to `self`.
 
@@ -59,4 +59,4 @@ grouped [`plist`](./pstar_plist.md)s.
 
 
 
-## [Source](../pstar/pstar.py#L1392-L1462)
+## [Source](../pstar/pstar.py#L1398-L1468)

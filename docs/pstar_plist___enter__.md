@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__enter__(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__enter__(self) -> 'Self'`
 
 Allow the use of plists in `with` statements.
 
@@ -19,4 +19,4 @@ assert (len(texts.all(isinstance, str)) >= 1)
 
 
 
-## [Source](../pstar/pstar.py#L3105-L3123)
+## [Source](../pstar/pstar.py#L3174-L3192)

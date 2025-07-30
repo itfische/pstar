@@ -1,6 +1,6 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pstructure(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pstructure(self) -> 'Self'`
 
-Returns a `list` of the number of elements in each layer of `self`.
+Returns a [`plist`](./pstar_plist.md) of the number of elements in each layer of `self`.
 
 Gives a snapshot view of the structure of `self`. The length of the returned
 list is the depth of `self`. Each value in the list is the result of calling
@@ -42,4 +42,4 @@ assert (filtered.pstructure().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L5271-L5315)
+## [Source](../pstar/pstar.py#L5345-L5389)

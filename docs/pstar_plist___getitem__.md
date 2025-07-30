@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__getitem__(self, key)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__getitem__(self, key: 'Any') -> 'Self'`
 
 Returns a new [`plist`](./pstar_plist.md) using a variety of indexing styles.
 
@@ -105,4 +105,4 @@ assert (pl.__getitem__(slice(0, 3, 2), pepth=1).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2138-L2263)
+## [Source](../pstar/pstar.py#L2149-L2274)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`pitems(self)`
+# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`pitems(self) -> 'plist'`
 
 Equivalent to `self.items()`, but returns a [`plist`](./pstar_plist.md) with items sorted as in `self.peys()`.
 
@@ -21,4 +21,4 @@ so the first element can be accessed with `.key` and the second with `.value`.
 
 
 
-## [Source](../pstar/pstar.py#L375-L395)
+## [Source](../pstar/pstar.py#L380-L400)

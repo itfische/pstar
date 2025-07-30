@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`defaultpdict`](./pstar_defaultpdict.md).`__setattr__(self, name, value)`
+# [`pstar`](./pstar.md).[`defaultpdict`](./pstar_defaultpdict.md).`__setattr__(self, name: 'str', value: 'Any') -> 'Self'`
 
 Attribute assignment operation. Forwards to subscript assignment.
 
@@ -25,4 +25,4 @@ assert (pd.floo == pd['floo'] == 4.0)
 
 
 
-## [Source](../pstar/pstar.py#L609-L632)
+## [Source](../pstar/pstar.py#L614-L637)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`plt(self, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`plt(self, **kwargs) -> 'Self'`
 
 Convenience method for managing `matplotlib.pyplot` state within a [`plist`](./pstar_plist.md) chain.
 
@@ -66,4 +66,4 @@ plt.show()
 
 
 
-## [Source](../pstar/pstar.py#L3846-L3950)
+## [Source](../pstar/pstar.py#L3920-L4024)

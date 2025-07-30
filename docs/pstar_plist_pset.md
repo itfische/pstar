@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pset(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pset(self) -> 'Self'`
 
 Converts the elements of self into pset objects.
 
@@ -21,4 +21,4 @@ assert (by_bar.foo.pset().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L3770-L3790)
+## [Source](../pstar/pstar.py#L3844-L3864)

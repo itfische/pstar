@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`qj(self, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`qj(self, *args, **kwargs) -> 'Self'`
 
 Applies logging function qj to self for easy in-chain logging.
 
@@ -28,4 +28,4 @@ assert (foos.foo.qj('foo').aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4460-L4487)
+## [Source](../pstar/pstar.py#L4534-L4561)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`groupby(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`groupby(self) -> 'Self'`
 
 Group `self.root()` by the values in `self` and return `self.root()`.
 
@@ -64,4 +64,4 @@ unsurprising result of putting each element into its own group.
 
 
 
-## [Source](../pstar/pstar.py#L4491-L4562)
+## [Source](../pstar/pstar.py#L4565-L4636)

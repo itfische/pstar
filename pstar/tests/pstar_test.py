@@ -1246,13 +1246,13 @@ class PStarTest(unittest.TestCase):
     ((foos.bar == 0).me()
       .foo.apply(
           self.assertEqual,
-          me.foo
+          me.foo  # pyright: ignore[reportUndefinedVariable]
       )
     )
 
     me2 = plist()
-    me.bar.me('me2').apply(self.assertEqual, me2)
-    me.bar.me('me2').root().baz.apply(self.assertEqual, me2.root().baz)
+    me.bar.me('me2').apply(self.assertEqual, me2)  # pyright: ignore[reportUndefinedVariable]
+    me.bar.me('me2').root().baz.apply(self.assertEqual, me2.root().baz)  # pyright: ignore[reportUndefinedVariable]
 
     (foos.bar.sortby(reverse=True).groupby().baz.groupby()
       .baz.me(me).sortby_().root()
@@ -1289,14 +1289,14 @@ class PStarTest(unittest.TestCase):
       ((foos.bar == 0).me()
         .foo.apply(
             self.assertEqual,
-            me.foo
+            me.foo  # pyright: ignore[reportUndefinedVariable]
         )
       )
 
       self.assertTrue('me' in globals())
 
-      me.bar.me('me2').apply(self.assertEqual, me2)
-      me.bar.me('me2').root().baz.apply(self.assertEqual, me2.root().baz)
+      me.bar.me('me2').apply(self.assertEqual, me2)  # pyright: ignore[reportUndefinedVariable]
+      me.bar.me('me2').root().baz.apply(self.assertEqual, me2.root().baz)  # pyright: ignore[reportUndefinedVariable]
 
       self.assertTrue('me2' in globals())
     finally:
@@ -3206,6 +3206,7 @@ class PStarTest(unittest.TestCase):
     pd2 = pd1.copy()
     self.assertTrue(pd2 == pd1)
     self.assertTrue(pd2 is not pd1)
+    self.assertTrue(isinstance(pd2, defaultpdict))
 
 
   def test_from_docs_pstar_defaultpdict_palues(self):
@@ -4244,8 +4245,8 @@ class PStarTest(unittest.TestCase):
       foos.bar.groupby().baz.sortby_().groupby().me(me2).foo.plt().plot(me2.foo + 1)
     new_context()
     def new_context():
-      foos.bar.groupby().baz.sortby_().groupby().me().foo.plt().plot(me.baz)
-      foos.bar.groupby().baz.sortby_().groupby().me('baz').foo.plt().plot(baz.baz)
+      foos.bar.groupby().baz.sortby_().groupby().me().foo.plt().plot(me.baz)  # pyright: ignore[reportUndefinedVariable]
+      foos.bar.groupby().baz.sortby_().groupby().me('baz').foo.plt().plot(baz.baz)  # pyright: ignore[reportUndefinedVariable]
       del globals()['me']
       del globals()['baz']
     new_context()

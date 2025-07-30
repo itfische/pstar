@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`ungroup(self, r=1, s=None)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`ungroup(self, r: 'int' = 1, s: 'Any' = None) -> 'Self'`
 
 Inverts the last grouping operation applied and returns a new plist.
 
@@ -46,4 +46,4 @@ assert (by_bar_baz.ungroup(-1).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4689-L4753)
+## [Source](../pstar/pstar.py#L4763-L4827)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pshape(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pshape(self) -> 'Self'`
 
 Returns a [`plist`](./pstar_plist.md) of the same structure as `self`, filled with leaf lengths.
 
@@ -47,4 +47,4 @@ assert (filtered.pshape().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L5221-L5270)
+## [Source](../pstar/pstar.py#L5295-L5344)

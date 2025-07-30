@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`ptuple`](./pstar_ptuple.md).`qj(self, *a, **kw)`
+# [`pstar`](./pstar.md).[`ptuple`](./pstar_ptuple.md).`qj(self, *a, **kw) -> 'Self'`
 
 Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
@@ -21,4 +21,4 @@ pt.qj('pt')
 
 
 
-## [Source](../pstar/pstar.py#L1085-L1107)
+## [Source](../pstar/pstar.py#L1091-L1113)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`defaultpdict`](./pstar_defaultpdict.md).`copy(self)`
+# [`pstar`](./pstar.md).[`defaultpdict`](./pstar_defaultpdict.md).`copy(self) -> 'Self'`
 
 Copy `self` to new [`defaultpdict`](./pstar_defaultpdict.md). Performs a shallow copy.
 
@@ -8,6 +8,7 @@ pd1 = defaultpdict(int).update(foo=1, bar=2.0, baz='three')
 pd2 = pd1.copy()
 assert (pd2 == pd1)
 assert (pd2 is not pd1)
+assert (isinstance(pd2, defaultpdict))
 ```
 
 **Returns:**
@@ -16,4 +17,4 @@ assert (pd2 is not pd1)
 
 
 
-## [Source](../pstar/pstar.py#L745-L760)
+## [Source](../pstar/pstar.py#L750-L766)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`aspdict(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`aspdict(self) -> 'pdict'`
 
 Convert `self` to a [`pdict`](./pstar_pdict.md) if there is a natural mapping of keys to values in `self`.
 
@@ -26,4 +26,4 @@ assert ([type(x) for x in by_bar.astuple()] == [tuple, tuple])
 
 
 
-## [Source](../pstar/pstar.py#L3529-L3559)
+## [Source](../pstar/pstar.py#L3603-L3633)

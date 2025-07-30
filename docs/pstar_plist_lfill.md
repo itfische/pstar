@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`lfill(self, v=0, s=None)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`lfill(self, v: 'int' = 0, s: 'Any' = None) -> 'list'`
 
 Returns a **`list`** with the structure of `self` filled in order from `v`.
 
@@ -52,4 +52,4 @@ assert (filtered.lfill(3) ==
 
 
 
-## [Source](../pstar/pstar.py#L5317-L5370)
+## [Source](../pstar/pstar.py#L5391-L5444)

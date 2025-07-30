@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`remix(self, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`remix(self, *args, **kwargs) -> 'Self'`
 
 Returns a new [`plist`](./pstar_plist.md) of `pdicts` based on selected data from `self`.
 
@@ -64,4 +64,4 @@ assert (rmx_by_bam.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L5003-L5077)
+## [Source](../pstar/pstar.py#L5077-L5151)

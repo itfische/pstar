@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pequal(self, other)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pequal(self, other: 'Any') -> 'bool'`
 
 Shortcutting recursive equality function.
 
@@ -36,4 +36,4 @@ assert (foos.pequal(zero_bars) == False)
 
 
 
-## [Source](../pstar/pstar.py#L4096-L4142)
+## [Source](../pstar/pstar.py#L4170-L4216)

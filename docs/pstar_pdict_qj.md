@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`qj(self, *a, **kw)`
+# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`qj(self, *a, **kw) -> 'Self'`
 
 Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
@@ -23,4 +23,4 @@ assert (pd.baz == 3)
 
 
 
-## [Source](../pstar/pstar.py#L396-L420)
+## [Source](../pstar/pstar.py#L401-L425)

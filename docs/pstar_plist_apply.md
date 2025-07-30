@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`apply(self, func, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`apply(self, func: 'str | list[Callable] | Callable', *args, **kwargs) -> 'Self'`
 
 Apply an arbitrary function to elements of self, forwarding arguments.
 
@@ -82,4 +82,4 @@ assert (by_bar_baz_apply_paslist_psplat.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4146-L4269)
+## [Source](../pstar/pstar.py#L4220-L4343)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`root(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`root(self) -> 'Self'`
 
 Returns the root of the [`plist`](./pstar_plist.md).
 
@@ -65,4 +65,4 @@ assert (by_bar.aslist() == by_bar.root().aslist())
 
 
 
-## [Source](../pstar/pstar.py#L3332-L3396)
+## [Source](../pstar/pstar.py#L3406-L3470)

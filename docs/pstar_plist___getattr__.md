@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__getattr__(self, name, _pepth=0)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__getattr__(self, name: 'str', _pepth: 'int' = 0) -> 'Any'`
 
 Recursively attempt to get the attribute `name`.
 
@@ -31,4 +31,4 @@ trailing '_' in the name that were detected by [`__getattribute__`](./pstar_plis
 
 
 
-## [Source](../pstar/pstar.py#L2082-L2137)
+## [Source](../pstar/pstar.py#L2089-L2148)

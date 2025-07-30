@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__setslice__(self, i, j, sequence)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__setslice__(self, i: 'int', j: 'int', sequence: 'Any') -> 'Self'`
 
 Delegates to [`__setitem__`](./pstar_plist___setitem__.md) whenever possible. For compatibility with python 2.7.
 
@@ -55,4 +55,4 @@ assert (pl.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2521-L2585)
+## [Source](../pstar/pstar.py#L2532-L2596)

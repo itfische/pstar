@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`plen(self, r=0, s=False)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`plen(self, r: 'int' = 0, s: 'bool' = False) -> 'Self | int'`
 
 Returns a [`plist`](./pstar_plist.md) of the length of a recursively-selected layer of `self`.
 
@@ -66,4 +66,4 @@ assert (filtered.plen(-1, s=True) == 2)
 
 
 
-## [Source](../pstar/pstar.py#L5144-L5220)
+## [Source](../pstar/pstar.py#L5218-L5294)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`palues(self)`
+# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`palues(self) -> 'plist'`
 
 Equivalent to `self.values()`, but returns a [`plist`](./pstar_plist.md) with values sorted as in `self.peys()`.
 
@@ -25,4 +25,4 @@ assert (pd_str ==
 
 
 
-## [Source](../pstar/pstar.py#L350-L374)
+## [Source](../pstar/pstar.py#L355-L379)

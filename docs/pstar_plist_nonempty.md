@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`nonempty(self, r=0)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`nonempty(self, r: 'int' = 0) -> 'Self'`
 
 Returns a new [`plist`](./pstar_plist.md) with empty sublists removed.
 
@@ -92,4 +92,4 @@ of empty sublists starting from one layer into `filtered`.
 
 
 
-## [Source](../pstar/pstar.py#L4794-L4892)
+## [Source](../pstar/pstar.py#L4868-L4966)

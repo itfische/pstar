@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`values_like(self, value=0)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`values_like(self, value: 'Any' = 0) -> 'Self'`
 
 Returns a [`plist`](./pstar_plist.md) with the structure of `self` filled with `value`.
 
@@ -59,4 +59,4 @@ assert (all_the_same_dict ==
 
 
 
-## [Source](../pstar/pstar.py#L5485-L5547)
+## [Source](../pstar/pstar.py#L5559-L5621)

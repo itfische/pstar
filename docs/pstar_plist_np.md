@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`np(self, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`np(self, *args, **kwargs) -> 'Self'`
 
 Converts the elements of `self` to `numpy.array`s, forwarding passed args.
 
@@ -46,4 +46,4 @@ assert ((by_bar.foo.np() * by_bar.baz.np() - by_bar.bin.np()).sum().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L3574-L3617)
+## [Source](../pstar/pstar.py#L3648-L3691)

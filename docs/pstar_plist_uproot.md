@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`uproot(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`uproot(self) -> 'Self'`
 
 Sets the root to `self` so future `root()` calls return this [`plist`](./pstar_plist.md).
 
@@ -31,4 +31,4 @@ See `plist.root` for more details.
 
 
 
-## [Source](../pstar/pstar.py#L3397-L3428)
+## [Source](../pstar/pstar.py#L3471-L3502)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).`frozenpset(iterable=(), /)`
+# [`pstar`](./pstar.md).`frozenpset(frozenset)`
 
 Placeholder `frozenset` subclass. Mostly unimplemented.
 
@@ -33,8 +33,8 @@ See [`pstar`](./pstar_pstar.md) for more details on conversion.
 
 ## Methods and Properties:
 
-### [`pstar.frozenpset.qj(self, *a, **kw)`](./pstar_frozenpset_qj.md)
+### [`pstar.frozenpset.qj(self, *a, **kw) -> 'Self'`](./pstar_frozenpset_qj.md)
 
 Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
-## [Source](../pstar/pstar.py#L925-L980)
+## [Source](../pstar/pstar.py#L931-L986)

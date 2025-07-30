@@ -24,35 +24,40 @@ or like this:
 from pstar import defaultpdict, frozenpset, pdict, plist, pset, ptuple, pstar
 ```
 """
+from __future__ import annotations
 
 import collections
 from collections import defaultdict
-try:
-  collectionsAbc = collections.abc
-except AttributeError:
-  collectionsAbc = collections
 
 import inspect
 from multiprocessing.dummy import Pool
 import operator
 import os
 import sys
-import types
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Self
 
 try:
-  import matplotlib.pyplot as plt
+  import matplotlib.pyplot as plt  # pyright: ignore[reportMissingModuleSource]
 except ImportError:
   plt = None
 
 try:
-  import numpy as np
+  import numpy as np  # pyright: ignore[reportMissingModuleSource]
 except ImportError:
   np = None
 
 try:
-  import pandas as pd
+  import pandas as pd  # pyright: ignore[reportMissingModuleSource]
 except ImportError:
   pd = None
+
+if TYPE_CHECKING:
+  try:
+    import pandas as pd  # pyright: ignore[reportMissingModuleSource]
+    PdDataFrameType = pd.DataFrame
+  except ImportError:
+    PdDataFrameType = Any
+
 
 from qj import qj
 
@@ -60,7 +65,7 @@ from qj import qj
 # pylint: disable=line-too-long,invalid-name,g-explicit-length-test,broad-except,g-long-lambda
 
 
-def _compatible_metaclass(meta, *bases):
+def _compatible_metaclass(meta: type, *bases) -> type:
   class metaclass(meta):
     __call__ = type.__call__
     __init__ = type.__init__
@@ -73,22 +78,22 @@ def _compatible_metaclass(meta, *bases):
 
 
 class _SyntaxSugar(type):
-  def __getitem__(cls, key):
+  def __getitem__(cls, key: Any) -> Any:
     return cls(key)
 
-  def __add__(cls, other):
+  def __add__(cls, other: Any) -> Any:
     return _SyntaxSugar.__mul__(cls, other, depth=1)
 
-  def __radd__(cls, other):
+  def __radd__(cls, other: Any) -> Any:
     return _SyntaxSugar.__rmul__(cls, other, depth=1)
 
-  def __sub__(cls, other):
+  def __sub__(cls, other: Any) -> Any:
     return other - pstar + cls
 
-  def __rsub__(cls, other):
+  def __rsub__(cls, other: Any) -> Any:
     return _SyntaxSugar.__rtruediv__(cls, other, depth=1)
 
-  def __mul__(cls, other, depth=-1):
+  def __mul__(cls, other: Any, depth: int = -1) -> Any:
     keys = plist(pstar.cls_map().keys())
     cls_map = (
         keys.zip(keys).uproot().pdict()  # Map all classes to themselves
@@ -96,13 +101,13 @@ class _SyntaxSugar(type):
     assert len(keys) == len(cls_map)  # We better not have dropped any classes
     return pstar(other, cls_map, depth)
 
-  def __rmul__(cls, other, depth=-1):
+  def __rmul__(cls, other: Any, depth: int = -1) -> Any:
     return _SyntaxSugar.__mul__(cls, other, depth)
 
-  def __truediv__(cls, other):
+  def __truediv__(cls, other: Any) -> Any:
     return other / pstar * cls
 
-  def __rtruediv__(cls, other, depth=-1):
+  def __rtruediv__(cls, other: Any, depth: int = -1) -> Any:
     keys = plist(pstar.cls_map().keys())
     cls_map = (
         keys.zip(keys).uproot().pdict()  # Map all classes to themselves
@@ -197,7 +202,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     dict.__init__(self, *a, **kw)
     self.__dict__ = self
 
-  def __getitem__(self, key):
+  def __getitem__(self, key: Any) -> Any:
     """Subscript operation. Keys can be any normal `dict` keys or `list`s of such keys.
 
     Examples:
@@ -229,7 +234,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     else:
       return dict.__getitem__(self, key)
 
-  def __setitem__(self, key, value):
+  def __setitem__(self, key: Any, value: Any) -> Self:
     """Subscript assignment operation. Keys and values can be scalars or `list`s.
 
     Examples:
@@ -264,7 +269,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
       dict.__setitem__(self, key, value)
     return self
 
-  def __str__(self):
+  def __str__(self) -> str:
     """Readable string representation of `self`.
 
     Examples:
@@ -288,7 +293,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
 
   __repr__ = __str__
 
-  def update(self, *a, **kw):
+  def update(self, *a, **kw) -> Self:
     """Update `self`. **Returns `self` to allow chaining.**
 
     Examples:
@@ -309,7 +314,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     dict.update(self, *a, **kw)
     return self
 
-  def copy(self):
+  def copy(self) -> Self:
     """Copy `self` to new `defaultpdict`. Performs a shallow copy.
 
     Examples:
@@ -325,7 +330,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     """
     return pdict(dict.copy(self))
 
-  def peys(self):
+  def peys(self) -> plist:
     """Get `self.keys()` as a sorted `plist`.
 
     In the common case of a `pdict` with sortable keys, it is often convenient
@@ -347,7 +352,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     """
     return plist(sorted(self.keys()))
 
-  def palues(self):
+  def palues(self) -> plist:
     """Equivalent to `self.values()`, but returns a `plist` with values sorted as in `self.peys()`.
 
     Examples:
@@ -372,7 +377,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     """
     return self[self.peys()]
 
-  def pitems(self):
+  def pitems(self) -> plist:
     """Equivalent to `self.items()`, but returns a `plist` with items sorted as in `self.peys()`.
 
     Examples:
@@ -393,7 +398,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     """
     return self.palues().root()
 
-  def qj(self, *a, **kw):
+  def qj(self, *a, **kw) -> Self:
     """Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
     `qj` is a debug logging function. Calling `pdict.qj()` is often the fastest way
@@ -418,7 +423,7 @@ class pdict(_compatible_metaclass(_SyntaxSugar, dict)):
     depth = kw.pop('_depth', 0) + base_depth
     return qj(self, _depth=depth, *a, **kw)
 
-  def rekey(self, map_or_fn=None, inplace=False, **kw):
+  def rekey(self, map_or_fn: (dict | Callable | None) = None, inplace: bool = False, **kw) -> Self:
     """Change the keys of `self` or a copy while keeping the same values.
 
     Convenience method for renaming keys in a `pdict`. Passing a `dict` mapping
@@ -586,7 +591,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     """
     defaultdict.__init__(self, *a, **kw)
 
-  def __getattr__(self, name):
+  def __getattr__(self, name: str) -> Any:
     """Override `getattr`. If `name` starts with '_', attempts to find that attribute on `self`. Otherwise, looks for a field of that name in `self`.
 
     Examples:
@@ -606,7 +611,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
       return defaultdict.__getattribute__(self, name)
     return self[name]
 
-  def __setattr__(self, name, value):
+  def __setattr__(self, name: str, value: Any) -> Self:  # type: ignore
     """Attribute assignment operation. Forwards to subscript assignment.
 
     Permits `pdict`-style field assignment.
@@ -630,7 +635,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     self[name] = value
     return self
 
-  def __getitem__(self, key):
+  def __getitem__(self, key: Any) -> Any:
     """Subscript operation. Keys can be any normal `dict` keys or `list`s of such keys.
 
     Examples:
@@ -662,7 +667,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     else:
       return defaultdict.__getitem__(self, key)
 
-  def __setitem__(self, key, value):
+  def __setitem__(self, key: Any, value: Any) -> Self:
     """Subscript assignment operation. Keys and values can be scalars or `list`s.
 
     Examples:
@@ -697,7 +702,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
       defaultdict.__setitem__(self, key, value)
     return self
 
-  def __str__(self):
+  def __str__(self) -> str:
     """Readable string representation of `self`.
 
     Examples:
@@ -721,7 +726,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
 
   __repr__ = __str__
 
-  def update(self, *a, **kw):
+  def update(self, *a, **kw) -> Self:
     """Update `self`. **Returns `self` to allow chaining.**
 
     Examples:
@@ -742,7 +747,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     defaultdict.update(self, *a, **kw)
     return self
 
-  def copy(self):
+  def copy(self) -> Self:
     """Copy `self` to new `defaultpdict`. Performs a shallow copy.
 
     Examples:
@@ -751,14 +756,15 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     pd2 = pd1.copy()
     assert (pd2 == pd1)
     assert (pd2 is not pd1)
+    assert (isinstance(pd2, defaultpdict))
     ```
 
     Returns:
       A `defaultpdict` that is a shallow copy of `self`.
     """
-    return defaultdict.copy(self)
+    return defaultdict.copy(self)  # type: ignore
 
-  def peys(self):
+  def peys(self) -> plist:
     """Get `self.keys()` as a sorted `plist`.
 
     In the common case of a `defaultpdict` with sortable keys, it is often convenient
@@ -780,7 +786,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     """
     return plist(sorted(self.keys()))
 
-  def palues(self):
+  def palues(self) -> plist:
     """Equivalent to `self.values()`, but returns a `plist` with values sorted as in `self.peys()`.
 
     Examples:
@@ -805,7 +811,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     """
     return self[self.peys()]
 
-  def pitems(self):
+  def pitems(self) -> plist:
     """Equivalent to `self.items()`, but returns a `plist` with items sorted as in `self.peys()`.
 
     Examples:
@@ -826,7 +832,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     """
     return self.palues().root()
 
-  def qj(self, *a, **kw):
+  def qj(self, *a, **kw) -> Self:
     """Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
     `qj` is a debug logging function. Calling `defaultpdict.qj()` is often the fastest way
@@ -851,7 +857,7 @@ class defaultpdict(_compatible_metaclass(_SyntaxSugar, defaultdict)):
     depth = kw.pop('_depth', 0) + base_depth
     return qj(self, _depth=depth, *a, **kw)
 
-  def rekey(self, map_or_fn=None, inplace=False, **kw):
+  def rekey(self, map_or_fn: (dict | Callable | None) = None, inplace: bool = False, **kw) -> Self:
     """Change the keys of `self` or a copy while keeping the same values.
 
     Convenience method for renaming keys in a `defaultpdict`. Passing a `dict` mapping
@@ -955,7 +961,7 @@ class frozenpset(_compatible_metaclass(_SyntaxSugar, frozenset)):
   See `pstar.pstar` for more details on conversion.
   """
 
-  def qj(self, *a, **kw):
+  def qj(self, *a, **kw) -> Self:
     """Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
     `qj` is a debug logging function. Calling `frozenpset.qj()` is often the fastest way
@@ -1019,7 +1025,7 @@ class pset(_compatible_metaclass(_SyntaxSugar, set)):
   See `pstar.pstar` for more details on conversion.
   """
 
-  def qj(self, *a, **kw):
+  def qj(self, *a, **kw) -> Self:
     """Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
     `qj` is a debug logging function. Calling `pset.qj()` is often the fastest way
@@ -1082,7 +1088,7 @@ class ptuple(_compatible_metaclass(_SyntaxSugar, tuple)):
   See `pstar.pstar` for more details on conversion.
   """
 
-  def qj(self, *a, **kw):
+  def qj(self, *a, **kw) -> Self:
     """Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
     `qj` is a debug logging function. Calling `ptuple.qj()` is often the fastest way
@@ -1113,7 +1119,7 @@ class ptuple(_compatible_metaclass(_SyntaxSugar, tuple)):
 ################################################################################
 ################################################################################
 ################################################################################
-def _build_comparator(op, merge_op, shortcut, return_root_if_empty_other):
+def _build_comparator(op: Callable, merge_op: Callable, shortcut: Callable, return_root_if_empty_other: bool) -> Callable:
   """Builds a plist comparator operation.
 
   Args:
@@ -1128,7 +1134,7 @@ def _build_comparator(op, merge_op, shortcut, return_root_if_empty_other):
   Returns:
     comparator: The comparison function.
   """
-  def comparator(self, other, return_inds=False):
+  def comparator(self, other: Any, return_inds: bool = False) -> plist:
     """`plist` comparison operator. **Comparisons filter plists.**
 
     **IMPORTANT:** `plist` comparisons all filter the `plist` and return a new
@@ -1285,7 +1291,7 @@ def _build_comparator(op, merge_op, shortcut, return_root_if_empty_other):
   return comparator
 
 
-def _build_logical_op(op):
+def _build_logical_op(op: Callable) -> Callable:
   """Builds a `plist` logical operation.
 
   Args:
@@ -1294,7 +1300,7 @@ def _build_logical_op(op):
   Returns:
     logical_op: The logical operation function.
   """
-  def logical_op(self, other):
+  def logical_op(self, other: Any) -> plist:
     """`plist` logical operation. **Logical operations perform set operations on `plist`s.**
 
     **IMPORTANT:** `plist` logical operations between two `plist`s perform `set` operations
@@ -1380,7 +1386,7 @@ def _build_logical_op(op):
   return logical_op
 
 
-def _build_binary_op(op):
+def _build_binary_op(op: Callable) -> Callable:
   """Builds a plist binary operation.
 
   Args:
@@ -1389,7 +1395,7 @@ def _build_binary_op(op):
   Returns:
     binary_op: The binary operation function.
   """
-  def binary_op(self, other):
+  def binary_op(self, other: Any) -> plist:
     """`plist` binary operation; applied element-wise to `self`.
 
     `binary_op` is not callable directly from `plist`. It implements the various
@@ -1463,7 +1469,7 @@ def _build_binary_op(op):
   return binary_op
 
 
-def _build_binary_rop(op):
+def _build_binary_rop(op: Callable) -> Callable:
   """Builds a plist binary operation where the plist is only the right side.
 
   Args:
@@ -1472,7 +1478,7 @@ def _build_binary_rop(op):
   Returns:
     binary_rop: The corresponding right-side binary operation function.
   """
-  def binary_rop(self, other):
+  def binary_rop(self, other: Any) -> plist:
     if (other is pstar
         or other is defaultpdict
         or other is frozenpset
@@ -1488,7 +1494,7 @@ def _build_binary_rop(op):
   return binary_rop
 
 
-def _build_binary_ops(op, iop):
+def _build_binary_ops(op: Callable, iop: Callable) -> tuple[Callable, Callable, Callable]:
   """Builds all three variants of plist binary operation: op, rop, and iop.
 
   Args:
@@ -1501,7 +1507,7 @@ def _build_binary_ops(op, iop):
   return _build_binary_op(op), _build_binary_rop(op), _build_binary_op(iop)
 
 
-def _build_unary_op(op):
+def _build_unary_op(op: Callable) -> Callable:
   """Builds a plist unary operation.
 
   Args:
@@ -1510,7 +1516,7 @@ def _build_unary_op(op):
   Returns:
     unary_op: The unary operation function.
   """
-  def unary_op(self):
+  def unary_op(self) -> plist:
     """`plist` unary operation; applied element-wise to `self`.
 
     `unary_op` is not callable directly from `plist`. It implements the various
@@ -1567,7 +1573,7 @@ else:
 NONCALLABLE_ATTRS = ['__class__', '__dict__', '__doc__', '__module__']
 
 
-def _call_attr(_pobj, _pname, _pattr, *_pargs, **_pkwargs):
+def _call_attr(_pobj: Any, _pname: str, _pattr: Callable, *_pargs, **_pkwargs) -> Any:
   """Recursive function to call the desired attribute.
 
   Args:
@@ -1645,7 +1651,8 @@ def _call_attr(_pobj, _pname, _pattr, *_pargs, **_pkwargs):
   elif _pname == 'qj':
     depth = _pkwargs.pop('_depth', 0) + call_pepth + 1  # This call doesn't incur a pass through a list comprehension, so don't use PLIST_CALL_ATTR_CALL_PEPTH_DELTA, just use 1.
     result = _pattr(_depth=depth, *_pargs, **_pkwargs)
-  elif _pname in NONCALLABLE_ATTRS:
+  elif _pname in NONCALLABLE_ATTRS or _pname in ['_', '__', 'pget']:
+    # Non-callable attributes and @property methods.
     return _pattr
   else:
     result = _pattr(*_pargs, **_pkwargs)
@@ -1655,7 +1662,7 @@ def _call_attr(_pobj, _pname, _pattr, *_pargs, **_pkwargs):
   return result
 
 
-def _ensure_len(length, x, strict=False):
+def _ensure_len(length: int, x: Any, strict: bool = False) -> Any:
   """Convert `x` to a `list` of length `length` if necessary and return it.
 
   This function is the core of `plist` 'deepcasting', which is conceptually
@@ -1691,7 +1698,7 @@ def _ensure_len(length, x, strict=False):
   return [x for _ in range(length)]
 
 
-def _merge_indices(left, right, op):
+def _merge_indices(left: list, right: list, op: Callable) -> list:
   """Merge index arrays using set operation `op`.
 
   This is the core of the filtering that happens in the plist comparators.
@@ -1728,8 +1735,8 @@ def _successor(v):
   return s
 
 
-MAX_THREADS = max(1, os.cpu_count() - 2)
-def _run_in_pool(tasks, psplit):
+MAX_THREADS = max(1, (os.cpu_count() or 1) - 2)
+def _run_in_pool(tasks: list[Callable], psplit: int) -> list[Any]:
   pool_size = psplit if psplit > 1 else min(MAX_THREADS, len(tasks))
   with Pool(pool_size) as pool:
     results = [pool.apply_async(task) for task in tasks]
@@ -1986,7 +1993,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   ##############################################################################
 
-  def __getattribute__(self, name):
+  def __getattribute__(self, name: str) -> Self:
     """Returns a plist of the attribute for self, or for each element.
 
     If `name` exists as an attribute of plist, that attribute is returned.
@@ -2079,7 +2086,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # __get*__
   ##############################################################################
-  def __getattr__(self, name, _pepth=0):
+  def __getattr__(self, name: str, _pepth: int = 0) -> Any:
     """Recursively attempt to get the attribute `name`.
 
     Handles getting attributes from `self`, rather than from elements of `self`,
@@ -2118,24 +2125,28 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     else:
       wrap = lambda *a, **k: _call_attr(self, name, attr, *a, **k)
 
-    if name in NONCALLABLE_ATTRS or name in  ['_', '__']:
+    if name in NONCALLABLE_ATTRS:
       return wrap()
 
-    if name == 'pget':
-      # This is the magic of pget. We get the result, which is a bunch of `self`s at some pepth,
-      # and then we set the __pepth__ value back to the correct one. Compare this with the
-      # `_` and `__` functions, where they know the particular __pepth__ that the next call
-      # needs to happen at, so they can just set it on `self` before returning. With `pget`,
-      # the function doesn't know what the correct value is for the __pepth__, but we know
-      # the correct value here. This is what allows us to say things like:
-      # `pl.pget_[0:3:2]` and have it do the right thing.
+    if name in ['_', '__', 'pget']:
+      # Handle the @property methods. They each modify `__pepth__` of the return value in order
+      # to allow easier indexing of interior plists or their contentx.
+      # This is what allows us to say things like:
+      # `pl.pget_[0:3:2]`, `pl._[[True, False, True]]`, or `pl.__[0]` and have it do the right thing.
       ret = wrap()
-      ret.__pepth__ = _pepth
+      if name == '_':
+        ret.__pepth__ = -1
+      elif name == '__':
+        ret.__pepth__ = ret.pdepth(True)
+      elif name == 'pget':
+        ret.__pepth__ = _pepth
+      else:
+        raise RuntimeError(f'Unexpected @property name {name}')
       return ret
 
     return wrap
 
-  def __getitem__(self, key):
+  def __getitem__(self, key: Any) -> Self:
     """Returns a new `plist` using a variety of indexing styles.
 
     Examples:
@@ -2247,7 +2258,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
           return plist(list.__getitem__(self, key))
         return plist(list.__getitem__(self, key), root=plist(list.__getitem__(self.__root__, key)))
       else:
-        return list.__getitem__(self, key)
+        return list.__getitem__(self, key)  # type: ignore
     except TypeError as first_exception:
       try:
         if isinstance(key, list):
@@ -2261,7 +2272,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       except Exception as second_exception:
         raise TypeError('Failed to apply index to self or elements.\nself exception: %s\nelements exception: %s' % (str(first_exception), str(second_exception)))
 
-  def __getslice__(self, i, j):
+  def __getslice__(self, i: int, j: int) -> Self:
     """Delegates to `__getitem__` whenever possible. For compatibility with python 2.7.
 
     Avoid using `__getslice__` whenever possible in python 2.7, as the bytecode compiler
@@ -2310,15 +2321,15 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       return plist.__getattr__(self, '__getslice__')(i, j)
     try:
       if self is self.__root__:
-        return plist(list.__getslice__(self, i, j))
-      return plist(list.__getslice__(self, i, j), root=plist(list.__getslice__(self.__root__, i, j)))
+        return plist(list.__getslice__(self, i, j))  # type: ignore
+      return plist(list.__getslice__(self, i, j), root=plist(list.__getslice__(self.__root__, i, j)))  # type: ignore
     except Exception:
       return plist.__getitem__(self, slice(i, j))
 
   ##############################################################################
   # __set*__
   ##############################################################################
-  def __setattr__(self, name, val):
+  def __setattr__(self, name: str, val: Any) -> Self:  # type: ignore
     """Sets an attribute on a `plist` or its elements to `val`.
 
     This delegates almost entirely to the elements of `self`, allowing natural
@@ -2384,7 +2395,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
         x.__setattr__(name, lval[i])
     return self
 
-  def __setitem__(self, key, val):
+  def __setitem__(self, key: Any, val: Any) -> Self:
     """Sets items of `self` using a variety of indexing styles.
 
     Examples:
@@ -2487,12 +2498,12 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
           operator.__setitem__(self, k, lval[i])
       elif isinstance(key, slice):
         lval = val
-        if not isinstance(val, collectionsAbc.Iterable):
+        if not isinstance(val, Iterable):
           slice_len = len([i for i in range(*key.indices(len(self)))])
           lval = _ensure_len(slice_len, val)
         list.__setitem__(self, key, lval)
       else:
-        list.__setitem__(self, key, val)
+        list.__setitem__(self, key, val)  # type: ignore
     except Exception as first_exception:
       try:
         if isinstance(key, list):
@@ -2518,7 +2529,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     # Allow chaining of set ops when using apply('__setitem__', k, v) and apply(operators.__setitem__, k, v)
     return self
 
-  def __setslice__(self, i, j, sequence):
+  def __setslice__(self, i: int, j: int, sequence: Any) -> Self:
     """Delegates to `__setitem__` whenever possible. For compatibility with python 2.7.
 
     Avoid using `__setslice__` whenever possible in python 2.7, as the bytecode compiler
@@ -2578,7 +2589,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
         plist.__setslice__.__dict__['__warned__'] = True
       return plist.__getattr__(self, '__setslice__')(i, j, sequence)
     try:
-      list.__setslice__(self, i, j, sequence)
+      list.__setslice__(self, i, j, sequence)  # type: ignore
     except Exception:
       plist.__setitem__(self, slice(i, j), sequence)
     return self
@@ -2586,7 +2597,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # __del*__
   ##############################################################################
-  def __delattr__(self, name):
+  def __delattr__(self, name: str) -> Self:  # type: ignore
     """Deletes an attribute on elements of `self`.
 
     This delegates entirely to the elements of `self`, allowing natural
@@ -2621,7 +2632,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       x.__delattr__(name)
     return self
 
-  def __delitem__(self, key):
+  def __delitem__(self, key: Any) -> Self:
     """Deletes items of `self` using a variety of indexing styles.
 
     Examples:
@@ -2720,7 +2731,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
           operator.__delitem__(self, k)
       else:
         # Handles slices and ints. Other key types will fail.
-        list.__delitem__(self, key)
+        list.__delitem__(self, key)  # type: ignore
     except Exception as first_exception:
       try:
         if isinstance(key, list):
@@ -2743,7 +2754,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     # Allow chaining of set ops when using apply('__delitem__', k) and apply(operators.__delitem__, k)
     return self
 
-  def __delslice__(self, i, j):
+  def __delslice__(self, i: int, j: int) -> Self:
     """Delegates to `__delitem__` whenever possible. For compatibility with python 2.7.
 
     Avoid using `__delslice__` whenever possible in python 2.7, as the bytecode compiler
@@ -2807,7 +2818,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
         plist.__delslice__.__dict__['__warned__'] = True
       return plist.__getattr__(self, '__delslice__')(i, j)
     try:
-      list.__delslice__(self, i, j)
+      list.__delslice__(self, i, j)  # type: ignore
     except Exception:
       plist.__delitem__(self, slice(i, j))
     return self
@@ -2815,7 +2826,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # __call__
   ##############################################################################
-  def __call__(self, *args, **kwargs):
+  def __call__(self, *args, **kwargs) -> Self:
     """Call each element of self, possibly recusively.
 
     Any arguments passed to `__call__` that are `plist`s and have the same
@@ -2954,7 +2965,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # __contains__
   ##############################################################################
-  def __contains__(self, other):
+  def __contains__(self, other: Any) -> bool:
     """Implements the `in` operator to avoid inappropriate use of `plist` comparators.
 
     Examples:
@@ -2987,6 +2998,14 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Comparison operators -- ALL PERFORM FILTERING!
   ##############################################################################
+  def __cmp__(self, other: Any) -> Self: ...
+  def __eq__(self, other: Any) -> Self: ...
+  def __ne__(self, other: Any) -> Self: ...
+  def __gt__(self, other: Any) -> Self: ...
+  def __ge__(self, other: Any) -> Self: ...
+  def __lt__(self, other: Any) -> Self: ...
+  def __le__(self, other: Any) -> Self: ...
+
   __cmp__ = _build_comparator(
       operator.__eq__,
       operator.__or__,
@@ -3033,6 +3052,16 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Logical operators -- ALL PERFORM SET OPERATIONS!
   ##############################################################################
+  def __and__(self, other: Any) -> Self: ...
+  def __rand__(self, other: Any) -> Self: ...
+  def __iand__(self, other: Any) -> Self: ...
+  def __or__(self, other: Any) -> Self: ...
+  def __ror__(self, other: Any) -> Self: ...
+  def __ior__(self, other: Any) -> Self: ...
+  def __xor__(self, other: Any) -> Self: ...
+  def __rxor__(self, other: Any) -> Self: ...
+  def __ixor__(self, other: Any) -> Self: ...
+
   __and__ = _build_logical_op(operator.__and__)
   __rand__ = _build_binary_rop(operator.__and__)
   __iand__ = _build_binary_op(operator.__iand__)
@@ -3048,6 +3077,36 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Binary operators
   ##############################################################################
+  def __add__(self, other: Any) -> Self: ...
+  def __radd__(self, other: Any) -> Self: ...
+  def __iadd__(self, other: Any) -> Self: ...
+  def __sub__(self, other: Any) -> Self: ...
+  def __rsub__(self, other: Any) -> Self: ...
+  def __isub__(self, other: Any) -> Self: ...
+  def __mul__(self, other: Any) -> Self: ...
+  def __rmul__(self, other: Any) -> Self: ...
+  def __imul__(self, other: Any) -> Self: ...
+  def __truediv__(self, other: Any) -> Self: ...
+  def __rtruediv__(self, other: Any) -> Self: ...
+  def __itruediv__(self, other: Any) -> Self: ...
+  def __pow__(self, other: Any) -> Self: ...
+  def __rpow__(self, other: Any) -> Self: ...
+  def __ipow__(self, other: Any) -> Self: ...
+  def __mod__(self, other: Any) -> Self: ...
+  def __rmod__(self, other: Any) -> Self: ...
+  def __imod__(self, other: Any) -> Self: ...
+  def __divmod__(self, other: Any) -> Self: ...
+  def __rdivmod__(self, other: Any) -> Self: ...
+  def __floordiv__(self, other: Any) -> Self: ...
+  def __rfloordiv__(self, other: Any) -> Self: ...
+  def __ifloordiv__(self, other: Any) -> Self: ...
+  def __lshift__(self, other: Any) -> Self: ...
+  def __rlshift__(self, other: Any) -> Self: ...
+  def __ilshift__(self, other: Any) -> Self: ...
+  def __rshift__(self, other: Any) -> Self: ...
+  def __rrshift__(self, other: Any) -> Self: ...
+  def __irshift__(self, other: Any) -> Self: ...
+
   __add__, __radd__, __iadd__ = _build_binary_ops(operator.__add__, operator.__iadd__)
   __sub__, __rsub__, __isub__ = _build_binary_ops(operator.__sub__, operator.__isub__)
   __mul__, __rmul__, __imul__ = _build_binary_ops(operator.__mul__, operator.__imul__)
@@ -3068,6 +3127,16 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Unary operators
   ##############################################################################
+  def __neg__(self) -> Self: ...
+  def __pos__(self) -> Self: ...
+  def __abs__(self) -> Self: ...
+  def __invert__(self) -> Self: ...
+  def __complex__(self) -> Self: ...
+  def __int__(self) -> Self: ...
+  def __float__(self) -> Self: ...
+  def __oct__(self) -> Self: ...
+  def __hex__(self) -> Self: ...
+
   __neg__ = _build_unary_op(operator.__neg__)
 
   __pos__ = _build_unary_op(operator.__pos__)
@@ -3102,7 +3171,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Allow plist use as context managers.
   ##############################################################################
-  def __enter__(self):
+  def __enter__(self) -> Self:
     """Allow the use of plists in `with` statements.
 
     Examples:
@@ -3121,7 +3190,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     """
     return plist([x.__enter__() for x in self], root=self.__root__)
 
-  def __exit__(self, exc_type, exc_value, traceback):
+  def __exit__(self, exc_type, exc_value, traceback) -> Self:
     """Allow the use of plists in `with` statements.
 
     See `plist.__enter__`.
@@ -3134,7 +3203,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Sensible tab completion.
   ##############################################################################
-  def __dir__(self):
+  def __dir__(self) -> Self:
     """Allow natural tab-completion on `self` and its contents.
 
     Examples:
@@ -3168,7 +3237,8 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   ##############################################################################
 
-  def _(self):
+  @property
+  def _(self) -> Self:
     """Causes the next call to `self` to be performed as deep as possible in the `plist`.
 
     This is a convenience method primarily for easy subscripting of the values of
@@ -3200,10 +3270,12 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       `self`, but in a state such that the next access to a property or method of
       `self` occurs at the maximum depth.
     """
-    self.__pepth__ = -1
+    # See the comment in `__getattr__` above to understand how this works.
+    # (Search for '_', with the quotes.)
     return self
 
-  def __(self):
+  @property
+  def __(self) -> Self:
     """Causes the next call to `self` to be performed on the innermost `plist`.
 
     This is a convenience method primarily for easy subscripting of the innermost `plist`.
@@ -3244,10 +3316,12 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       `self`, but in a state such that the next access to a property or method of
       `self` occurs at the innermost `plist`.
     """
-    self.__pepth__ = self.pdepth(True)
+    # See the comment in `__getattr__` above to understand how this works.
+    # (Search for '__', with the quotes.)
     return self
 
-  def pget(self):
+  @property
+  def pget(self) -> Self:
     """Causes the next call to `self` to be performed at whatever depth is indicated by `pget`'s trailing underscores.
 
     `pget` complements `_` and `__`, which don't allow you to control the depth the next call occurs at.
@@ -3329,7 +3403,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # __root__ pointer management.
   ##############################################################################
-  def root(self):
+  def root(self) -> Self:
     """Returns the root of the `plist`.
 
     Examples:
@@ -3394,7 +3468,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     """
     return self.__root__
 
-  def uproot(self):
+  def uproot(self) -> Self:
     """Sets the root to `self` so future `root()` calls return this `plist`.
 
     Examples:
@@ -3429,7 +3503,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Conversion methods.
   ##############################################################################
-  def copy(self):
+  def copy(self) -> Self:
     """Copy `self` to new `plist`. Performs a shallow copy.
 
     `self.root()` is copied as well and used to root the copy if
@@ -3458,7 +3532,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       return plist(self)
     return plist(self, root=self.__root__.copy())
 
-  def aslist(self):
+  def aslist(self) -> list[Any]:
     """Recursively convert all nested `plist`s from `self` to `list`s, inclusive.
 
     Examples:
@@ -3478,7 +3552,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       pass
     return [x for x in self]
 
-  def astuple(self):
+  def astuple(self) -> tuple[Any, ...]:
     """Recursively convert all nested `plist`s from `self` to `tuple`s, inclusive.
 
     Examples:
@@ -3498,7 +3572,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       pass
     return tuple([x for x in self])
 
-  def aspset(self):
+  def aspset(self) -> pset | frozenpset:
     """Recursively convert all nested `plist`s from `self` to `pset`s, inclusive.
 
     All values must be hashable for the conversion to succeed. Grouped `plist`s
@@ -3526,7 +3600,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
         pass
     return frozenpset([x for x in self])
 
-  def aspdict(self):
+  def aspdict(self) -> pdict:
     """Convert `self` to a `pdict` if there is a natural mapping of keys to values in `self`.
 
     Recursively creates a `pdict` from `self`. Experimental, likely to change.
@@ -3558,7 +3632,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     return pd
 
   if np is None:
-    def np(self, *args, **kwargs):
+    def np(self, *args, **kwargs):  # type: ignore
       """If `numpy` were installed on your system, `plist.np()` would convert your `plist` to a `numpy.array`.
 
       Please install `numpy`:
@@ -3571,7 +3645,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       """
       raise NotImplementedError('numpy is unavailable on your system. Please install numpy before calling plist.np().')
   else:
-    def np(self, *args, **kwargs):
+    def np(self, *args, **kwargs) -> Self:
       """Converts the elements of `self` to `numpy.array`s, forwarding passed args.
 
       Examples:
@@ -3613,7 +3687,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       Returns:
         New `plist` with values from `self` converted to `np.array`s.
       """
-      return plist([np.array(x, *args, **kwargs) for x in self], root=self.__root__)
+      return plist([np.array(x, *args, **kwargs) for x in self], root=self.__root__)  # type: ignore
 
   if pd is None:
     def pd(self, *args, **kwargs):
@@ -3629,7 +3703,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       """
       raise NotImplementedError('pandas is unavailable on your system. Please install pandas before calling plist.pd().')
   else:
-    def pd(self, *args, **kwargs):
+    def pd(self, *args, **kwargs) -> PdDataFrameType:  # pyright: ignore[reportInvalidTypeForm]
       r"""Converts `self` into a `pandas.DataFrame`, forwarding passed args.
 
       Examples:
@@ -3697,9 +3771,9 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       Returns:
         A `pandas.DataFrame` object constructed from `self`.
       """
-      return pd.DataFrame.from_records(self.aslist(), *args, **kwargs)
+      return pd.DataFrame.from_records(self.aslist(), *args, **kwargs)  # type: ignore
 
-  def pdict(self, *args, **kwargs):
+  def pdict(self, *args, **kwargs) -> pdict:
     """Convert `self` to a `pdict` if there is a natural mapping of keys to values in `self`.
 
     If `self is self.root()`, attempts to treat the contents of `self` as key-value pairs in order
@@ -3767,7 +3841,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       pass
     return pdict({k: v for k, v in zip(self.__root__, self)}).update(*args, **kwargs)
 
-  def pset(self):
+  def pset(self) -> Self:
     """Converts the elements of self into pset objects.
 
     Useful for creating `set`s from grouped `plist`s.
@@ -3788,7 +3862,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     """
     return plist([pset(x) for x in self], root=self.__root__)
 
-  def pstr(self):
+  def pstr(self) -> Self:
     """Returns a plist with leaf elements converted to strings.
 
     Calls `str` on each leaf element of self.
@@ -3830,7 +3904,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   # Matplotlib pyplot convenience methods.
   ##############################################################################
   if plt is None:
-    def plt(self, *args, **kwargs):
+    def plt(self, *args, **kwargs):  # type: ignore
       """If `matplotlib.pyplot` were installed on your system, `plist.plt()` would make your use of `pyplot` easier.
 
       Please install `matplotlib.pyplot`:
@@ -3843,7 +3917,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       """
       raise NotImplementedError('matplotlib.pyplot is unavailable on your system. Please install matplotlib.pyplot before calling plist.plt().')
   else:
-    def plt(self, **kwargs):
+    def plt(self, **kwargs) -> Self:
       """Convenience method for managing `matplotlib.pyplot` state within a `plist` chain.
 
       `plt()` serves two purposes:
@@ -3952,7 +4026,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Shortcutting boolean test methods.
   ##############################################################################
-  def all(self, *args, **kwargs):
+  def all(self, *args, **kwargs) -> Self:
     """Returns `self` if `args[0]` evaluates to `True` for all elements of `self`.
 
     Shortcuts if `args[0]` ever evaluates to `False`.
@@ -3998,7 +4072,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
         return plist()
     return self
 
-  def any(self, *args, **kwargs):
+  def any(self, *args, **kwargs) -> Self:
     """Returns `self` if `args[0]` evaluates to `True` for any elements of `self`.
 
     Shortcuts if `args[0]` ever evaluates to `True`.
@@ -4044,7 +4118,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
         return self
     return plist()
 
-  def none(self, *args, **kwargs):
+  def none(self, *args, **kwargs) -> Self:
     """Returns `self` if `args[0]` evaluates to `False` for all elements of `self`.
 
     Shortcuts if `args[0]` ever evaluates to `True`.
@@ -4093,7 +4167,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Equality checking that returns bool instead of plist.
   ##############################################################################
-  def pequal(self, other):
+  def pequal(self, other: Any) -> bool:
     """Shortcutting recursive equality function.
 
     `pequal` always returns `True` or `False` rather than a plist. This is a
@@ -4143,7 +4217,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Function application methods.
   ##############################################################################
-  def apply(self, func, *args, **kwargs):
+  def apply(self, func: (str | list[Callable] | Callable), *args, **kwargs) -> Self:
     """Apply an arbitrary function to elements of self, forwarding arguments.
 
     Any arguments passed to `apply` that are `plist`s and have the same
@@ -4267,7 +4341,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
         return plist([funcs[i](*list(x) + [a[i] for a in args], **{k: v[i] for k, v in kwargs.items()}) for i, x in enumerate(self)], root=self.__root__)
       return plist([funcs[i](x, *[a[i] for a in args], **{k: v[i] for k, v in kwargs.items()}) for i, x in enumerate(self)], root=self.__root__)
 
-  def reduce(self, func, *args, **kwargs):
+  def reduce(self, func: Callable, *args, **kwargs) -> Self:
     """Apply a function repeatedly to its own result, returning a plist of length at most 1.
 
     `reduce` can be initialized either by using the `initial_value` keyword argument,
@@ -4428,7 +4502,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
 
     return plist.ungroup(plist([cur_val], root=plist([initial_value], root=new_plist.__root__)))
 
-  def filter(self, func=bool, *args, **kwargs):
+  def filter(self, func: Callable = bool, *args, **kwargs) -> Self:
     """Filter `self` by an arbitrary function on elements of `self`, forwarding arguments.
 
     `filter` always returns the root of the filtered `plist`.
@@ -4457,7 +4531,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     """
     return self.apply(func, *args, **kwargs).apply(bool) == True
 
-  def qj(self, *args, **kwargs):
+  def qj(self, *args, **kwargs) -> Self:
     """Applies logging function qj to self for easy in-chain logging.
 
     `qj` is a debug logging function. Calling `plist.qj()` is often the fastest way
@@ -4488,7 +4562,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Grouping and sorting methods.
   ##############################################################################
-  def groupby(self):
+  def groupby(self) -> Self:
     """Group `self.root()` by the values in `self` and return `self.root()`.
 
     Examples:
@@ -4560,7 +4634,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
         groups[x].append(self.__root__[i])
       return plist(groups.values())
 
-  def enum(self):
+  def enum(self) -> Self:
     """Wrap the current `plist` values in tuples where the first item is the index.
 
     Examples:
@@ -4580,7 +4654,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     """
     return plist(enumerate(self), root=self.__root__)
 
-  def wrap(self):
+  def wrap(self) -> Self:
     """Adds and returns an outer `plist` around `self`.
 
     Examples:
@@ -4626,7 +4700,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     """
     return plist([self])
 
-  def sortby(self, key=None, reverse=False):
+  def sortby(self, key: (Callable | None) = None, reverse: bool = False) -> Self:
     """Sorts `self` and `self.root()` in-place and returns `self`.
 
     `sortby` and `groupby` work together nicely to create sorted, nested plists.
@@ -4686,7 +4760,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       self[:] = self[sorted_inds]
     return self
 
-  def ungroup(self, r=1, s=None):
+  def ungroup(self, r: int = 1, s: Any = None) -> Self:
     """Inverts the last grouping operation applied and returns a new plist.
 
     `ungroup` undoes the last `groupby` operation by default. It removes
@@ -4751,7 +4825,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     s.p()
     return plist(new_items)
 
-  def zip(self, *others):
+  def zip(self, *others) -> Self:
     """Zips `self` with `others`, recursively.
 
     Examples:
@@ -4791,7 +4865,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Additional filtering methods.
   ##############################################################################
-  def nonempty(self, r=0):
+  def nonempty(self, r: int = 0) -> Self:
     """Returns a new `plist` with empty sublists removed.
 
     Examples:
@@ -4890,7 +4964,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     return plist([x for x in new_plist if len(x)],
                  root=plist([self.__root__[i] for i, x in enumerate(new_plist) if len(x)]))
 
-  def puniq(self):
+  def puniq(self) -> Self:
     """Returns a new `plist` with only a single element of each value in `self`.
 
     Examples:
@@ -5000,7 +5074,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       return plist(new_items, root=plist(new_roots))
     return plist(new_items)
 
-  def remix(self, *args, **kwargs):
+  def remix(self, *args, **kwargs) -> Self:
     r"""Returns a new `plist` of `pdicts` based on selected data from `self`.
 
     Examples:
@@ -5080,7 +5154,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
 
   # Depth, length, shape, and structure.
-  def pdepth(self, s=False):
+  def pdepth(self, s: bool = False) -> Self | int:
     """Returns a `plist` of the recursive depth of each leaf element, from 0.
 
     Examples:
@@ -5141,7 +5215,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       return 0
     return d
 
-  def plen(self, r=0, s=False):
+  def plen(self, r: int = 0, s: bool = False) -> Self | int:
     """Returns a `plist` of the length of a recursively-selected layer of `self`.
 
     Examples:
@@ -5218,7 +5292,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       return 0
     return l
 
-  def pshape(self):
+  def pshape(self) -> Self:
     """Returns a `plist` of the same structure as `self`, filled with leaf lengths.
 
     Examples:
@@ -5268,8 +5342,8 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     except Exception:
       return plist([len(self)], root=self.__root__)
 
-  def pstructure(self):
-    """Returns a `list` of the number of elements in each layer of `self`.
+  def pstructure(self) -> Self:
+    """Returns a `plist` of the number of elements in each layer of `self`.
 
     Gives a snapshot view of the structure of `self`. The length of the returned
     list is the depth of `self`. Each value in the list is the result of calling
@@ -5310,11 +5384,11 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     """
     s = []
     for r in range(self.pdepth(True) + 1):
-      s.extend(self.plen(r).ungroup(-1))
+      s.extend(self.plen(r).ungroup(-1))  # type: ignore
     return plist(s, root=self.__root__)
 
   # Fill with different values.
-  def lfill(self, v=0, s=None):
+  def lfill(self, v: int = 0, s: Any = None) -> list:
     """Returns a **`list`** with the structure of `self` filled in order from `v`.
 
     Identical to `plist.pfill()`, but returns a **`list`** instead of a `plist`.
@@ -5368,7 +5442,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     except Exception:
       return [s.s() for _ in range(len(self))]
 
-  def pfill(self, v=0, s=None):
+  def pfill(self, v: int = 0, s: Any = None) -> Self:
     """Returns a `plist` with the structure of `self` filled in order from `v`.
 
     Identical to `plist.lfill()`, but returns a **`plist`** instead of a `list`.
@@ -5421,7 +5495,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     except Exception:
       return plist([s.s() for _ in range(len(self))], root=self.__root__)
 
-  def pleft(self):
+  def pleft(self) -> Self:
     """Returns a `plist` with the structure of `self` filled `plen(-1)` to 0.
 
     Convenience method identical to `-self.pfill(1) + self.plen(-1, s=True)`.
@@ -5482,7 +5556,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     """
     return -self.pfill(1) + self.plen(-1, s=True)
 
-  def values_like(self, value=0):
+  def values_like(self, value: Any = 0) -> Self:
     """Returns a `plist` with the structure of `self` filled with `value`.
 
     Examples:
@@ -5548,7 +5622,7 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
   ##############################################################################
   # Calling-frame-modifying utility methods.
   ##############################################################################
-  def me(self, name_or_plist='me', call_pepth=0):
+  def me(self, name_or_plist: str | Self = 'me', call_pepth: int = 0) -> Self:
     """Sets the current plist as a variable available in the caller's context.
 
     `me` is a convenience method to naturally enable long chaining to prepare
@@ -5596,8 +5670,8 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     work if there are no local or global variables named `me` or `baz`:
     ```python
     def new_context():
-      foos.bar.groupby().baz.sortby_().groupby().me().foo.plt().plot(me.baz)
-      foos.bar.groupby().baz.sortby_().groupby().me('baz').foo.plt().plot(baz.baz)
+      foos.bar.groupby().baz.sortby_().groupby().me().foo.plt().plot(me.baz)  # pyright: ignore[reportUndefinedVariable]
+      foos.bar.groupby().baz.sortby_().groupby().me('baz').foo.plt().plot(baz.baz)  # pyright: ignore[reportUndefinedVariable]
       del globals()['me']
       del globals()['baz']
     new_context()
@@ -5624,17 +5698,17 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       call_pepth += 3
       f = inspect.currentframe()
       for _ in range(call_pepth):
-        f = f.f_back
+        f = f.f_back  # type: ignore
 
       if isinstance(name_or_plist, str):
-        frame_locals = f.f_locals
+        frame_locals = f.f_locals  # type: ignore
         if name_or_plist in frame_locals:
           me = frame_locals[name_or_plist]
           if not isinstance(me, plist):
             raise ValueError('To use plist.me(name_or_plist) with a local variable named %s, it must be a plist object. Got %r.' % (name_or_plist, me))
         else:
           me = plist()
-          f.f_globals[name_or_plist] = me
+          f.f_globals[name_or_plist] = me  # type: ignore
       elif isinstance(name_or_plist, plist):
         me = name_or_plist
       else:
@@ -5649,10 +5723,13 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
     finally:
       # Delete the stack frame to ensure there are no memory leaks, as suggested
       # by https://docs.python.org/2/library/inspect.html#the-interpreter-stack
-      del f
+      try:
+        del f  # type: ignore
+      except Exception:
+        pass
     return self
 
-  def pand(self, name='__plist_and_var__', call_pepth=0):
+  def pand(self, name: str = '__plist_and_var__', call_pepth: int = 0) -> Self:
     """Stores `self` into a `plist` of `tuple`s that gets extended with each call.
 
     `pand` is meant to facilitate building up `tuple`s of values to be sent as
@@ -5742,9 +5819,9 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
       call_pepth += 3
       f = inspect.currentframe()
       for _ in range(call_pepth):
-        f = f.f_back
+        f = f.f_back  # type: ignore
 
-      frame_locals = f.f_locals
+      frame_locals = f.f_locals  # type: ignore
       if name in frame_locals:
         and_var = frame_locals[name]
         if not isinstance(and_var, plist):
@@ -5760,11 +5837,14 @@ class plist(_compatible_metaclass(_SyntaxSugar, list)):
 
       frame_locals[name] = and_var
 
-      return and_var
+      return and_var  # type: ignore
     finally:
       # Delete the stack frame to ensure there are no memory leaks, as suggested
       # by https://docs.python.org/2/library/inspect.html#the-interpreter-stack
-      del f
+      try:
+        del f  # type: ignore
+      except Exception:
+        pass
 
 
 ################################################################################
@@ -5790,7 +5870,7 @@ class _Converter(type):
       ptuple: ptuple,
   })
 
-  def __call__(self, obj, cls_map=None, depth=-1, dbg=0):
+  def __call__(self, obj: Any, cls_map: pdict | None = None, depth: int = -1, dbg: int | bool = 0) -> Any:
     if depth == 0:
       return obj
     if cls_map is None:
@@ -5802,41 +5882,41 @@ class _Converter(type):
                        'Use grouping or ordering to avoid this:\n'
                        '`plist * (pdict * data)` or `plist * data * pdict`.')
 
-    target_type = cls_map.get(type(obj), None)
+    target_type = cls_map.get(type(obj), None)  # type: ignore
     if target_type:
       if hasattr(target_type, '__mro__') and defaultdict in target_type.__mro__:
         try:
           return target_type(obj.default_factory, **{k: self(obj[k], cls_map, depth - 1) for k in obj})
         except Exception as e:
-          qj(str(e), 'First defaultdict conversion failed for %s' % str(obj), b=dbg)
+          qj(str(e), 'First defaultdict conversion failed for %s' % str(obj), b=dbg)  # type: ignore
           try:
             return target_type(obj.default_factory, {k: self(obj[k], cls_map, depth - 1) for k in obj})
           except Exception as e:
-            qj(str(e), 'Second defaultdict conversion failed for %s' % str(obj), b=dbg)
+            qj(str(e), 'Second defaultdict conversion failed for %s' % str(obj), b=dbg)  # type: ignore
       try:
         return target_type(**{k: self(obj[k], cls_map, depth - 1) for k in obj})
       except Exception as e:
-        qj(str(e), 'First dict-style conversion failed for %s' % str(obj), b=dbg)
+        qj(str(e), 'First dict-style conversion failed for %s' % str(obj), b=dbg)  # type: ignore
         try:
           return target_type([self(x, cls_map, depth - 1) for x in obj])
         except Exception as e:
-          qj(str(e), 'List-style conversion failed for %s' % str(obj), b=dbg)
+          qj(str(e), 'List-style conversion failed for %s' % str(obj), b=dbg)  # type: ignore
           try:
             return target_type({k: self(obj[k], cls_map, depth - 1) for k in obj})
           except Exception as e:
-            qj(str(e), 'Second dict-style conversion failed for %s' % str(obj), b=dbg)
+            qj(str(e), 'Second dict-style conversion failed for %s' % str(obj), b=dbg)  # type: ignore
     return obj
 
-  def __mul__(self, other):
+  def __mul__(self, other: Any) -> Any:
     return self(other)
 
-  def __rmul__(self, other):
+  def __rmul__(self, other: Any) -> Any:
     return self(other)
 
-  def __truediv__(self, other):
+  def __truediv__(self, other: Any) -> Any:
     return self.__rtruediv__(other)  # Right division is the principled one.
 
-  def __rtruediv__(self, other, depth=-1):
+  def __rtruediv__(self, other: Any, depth: int = -1) -> Any:
     # Get non-pstar types mapping to pstar types.
     python_types = plist(self._cls_map.items())._[0] != [defaultpdict, frozenpset, pdict, plist, pset, ptuple]
     # Swap order of python and pstar types, then merge them with python types mapped to themselves.
@@ -5844,19 +5924,19 @@ class _Converter(type):
     assert len(self._cls_map) == len(cls_map)  # We better not have dropped any classes
     return self(other, cls_map, depth)
 
-  def __add__(self, other):
+  def __add__(self, other: Any) -> Any:
     return self(other, depth=1)
 
-  def __radd__(self, other):
+  def __radd__(self, other: Any) -> Any:
     return self(other, depth=1)
 
-  def __sub__(self, other):
+  def __sub__(self, other: Any) -> Any:
     return self.__rsub__(other)  # Right subtraction is the principled one.
 
-  def __rsub__(self, other):
+  def __rsub__(self, other: Any) -> Any:
     return self.__rtruediv__(other, depth=1)
 
-  def cls_map(self):
+  def cls_map(self) -> pdict:
     return self._cls_map.copy()
 
 
@@ -6106,7 +6186,7 @@ class pstar(_compatible_metaclass(_Converter, object)):
   ptuple = ptuple
 
   @classmethod
-  def convert_to_pstar_types(cls, other):
+  def convert_to_pstar_types(cls, other: Any) -> Any:
     """Recursively convert `other` to `pstar` types. The same as `pstar(other)` or `pstar * other`.
 
     Examples:
@@ -6126,9 +6206,9 @@ class pstar(_compatible_metaclass(_Converter, object)):
     ```
     """
     return other * cls
-  
+
   @classmethod
-  def convert_to_python_types(cls, other):
+  def convert_to_python_types(cls, other: Any) -> Any:
     """Recursively convert `other` to python types. The same as `other / pstar`.
 
     Examples:

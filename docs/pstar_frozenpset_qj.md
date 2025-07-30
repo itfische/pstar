@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`frozenpset`](./pstar_frozenpset.md).`qj(self, *a, **kw)`
+# [`pstar`](./pstar.md).[`frozenpset`](./pstar_frozenpset.md).`qj(self, *a, **kw) -> 'Self'`
 
 Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
@@ -21,4 +21,4 @@ ps.qj('ps')
 
 
 
-## [Source](../pstar/pstar.py#L958-L980)
+## [Source](../pstar/pstar.py#L964-L986)

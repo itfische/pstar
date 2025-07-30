@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pget(self)`
+# @property [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pget(self) -> 'Self'`
 
 Causes the next call to `self` to be performed at whatever depth is indicated by `pget`'s trailing underscores.
 
@@ -77,4 +77,4 @@ assert (pl.pget_[[0]].pget__[[1, 0]].aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L3250-L3328)
+## [Source](../pstar/pstar.py#L3323-L3402)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`__getitem__(self, key)`
+# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`__getitem__(self, key: 'Any') -> 'Any'`
 
 Subscript operation. Keys can be any normal `dict` keys or `list`s of such keys.
 
@@ -30,4 +30,4 @@ assert (pd[['foo', 'baz']].pdict() ==
 
 
 
-## [Source](../pstar/pstar.py#L200-L231)
+## [Source](../pstar/pstar.py#L205-L236)

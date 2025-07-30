@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`logical_op(self, other)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`logical_op(self, other: 'Any') -> 'plist'`
 
 [`plist`](./pstar_plist.md) logical operation. **Logical operations perform set operations on [`plist`](./pstar_plist.md)s.**
 
@@ -66,4 +66,4 @@ assert ((1 ^ by_bar.baz).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L1297-L1379)
+## [Source](../pstar/pstar.py#L1303-L1385)

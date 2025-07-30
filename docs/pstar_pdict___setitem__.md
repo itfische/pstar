@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`__setitem__(self, key, value)`
+# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`__setitem__(self, key: 'Any', value: 'Any') -> 'Self'`
 
 Subscript assignment operation. Keys and values can be scalars or `list`s.
 
@@ -31,4 +31,4 @@ assert (pd.baz == pd['baz'] == 'three')
 
 
 
-## [Source](../pstar/pstar.py#L232-L266)
+## [Source](../pstar/pstar.py#L237-L271)

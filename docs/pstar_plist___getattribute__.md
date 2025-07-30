@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__getattribute__(self, name)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__getattribute__(self, name: 'str') -> 'Self'`
 
 Returns a plist of the attribute for self, or for each element.
 
@@ -64,4 +64,4 @@ assert (by_bar.foo.pstr().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L1989-L2078)
+## [Source](../pstar/pstar.py#L1996-L2085)

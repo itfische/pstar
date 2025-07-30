@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__dir__(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__dir__(self) -> 'Self'`
 
 Allow natural tab-completion on `self` and its contents.
 
@@ -20,4 +20,4 @@ assert ('foo' in dir(foos.bar.groupby()))
 
 
 
-## [Source](../pstar/pstar.py#L3137-L3162)
+## [Source](../pstar/pstar.py#L3206-L3231)

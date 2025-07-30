@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__setattr__(self, name, val)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__setattr__(self, name: 'str', val: 'Any') -> 'Self'`
 
 Sets an attribute on a [`plist`](./pstar_plist.md) or its elements to `val`.
 
@@ -60,4 +60,4 @@ assert (by_bar.baz.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2321-L2386)
+## [Source](../pstar/pstar.py#L2332-L2397)

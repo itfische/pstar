@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`_(self)`
+# @property [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`_(self) -> 'Self'`
 
 Causes the next call to `self` to be performed as deep as possible in the [`plist`](./pstar_plist.md).
 
@@ -34,4 +34,4 @@ assert (pl.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L3171-L3205)
+## [Source](../pstar/pstar.py#L3240-L3276)

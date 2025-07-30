@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pstr(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pstr(self) -> 'Self'`
 
 Returns a plist with leaf elements converted to strings.
 
@@ -35,4 +35,4 @@ assert (by_bar.foo.apply(str).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L3791-L3828)
+## [Source](../pstar/pstar.py#L3865-L3902)

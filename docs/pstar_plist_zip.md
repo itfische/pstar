@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`zip(self, *others)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`zip(self, *others) -> 'Self'`
 
 Zips `self` with `others`, recursively.
 
@@ -30,4 +30,4 @@ assert (by_bar.bar.zip(by_bar.foo).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4754-L4790)
+## [Source](../pstar/pstar.py#L4828-L4864)

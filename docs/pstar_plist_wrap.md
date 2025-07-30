@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`wrap(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`wrap(self) -> 'Self'`
 
 Adds and returns an outer [`plist`](./pstar_plist.md) around `self`.
 
@@ -46,4 +46,4 @@ can be used in follow-on computations.
 
 
 
-## [Source](../pstar/pstar.py#L4583-L4628)
+## [Source](../pstar/pstar.py#L4657-L4702)

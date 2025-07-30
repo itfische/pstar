@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__setitem__(self, key, val)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__setitem__(self, key: 'Any', val: 'Any') -> 'Self'`
 
 Sets items of `self` using a variety of indexing styles.
 
@@ -98,4 +98,4 @@ assert (pl.apply(list).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2387-L2520)
+## [Source](../pstar/pstar.py#L2398-L2531)

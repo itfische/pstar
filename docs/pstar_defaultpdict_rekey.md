@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`defaultpdict`](./pstar_defaultpdict.md).`rekey(self, map_or_fn=None, inplace=False, **kw)`
+# [`pstar`](./pstar.md).[`defaultpdict`](./pstar_defaultpdict.md).`rekey(self, map_or_fn: 'dict | Callable | None' = None, inplace: 'bool' = False, **kw) -> 'Self'`
 
 Change the keys of `self` or a copy while keeping the same values.
 
@@ -47,4 +47,4 @@ assert (pd.far == 2.0)
 
 
 
-## [Source](../pstar/pstar.py#L854-L916)
+## [Source](../pstar/pstar.py#L860-L922)

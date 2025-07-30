@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`sortby(self, key=None, reverse=False)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`sortby(self, key: 'Callable | None' = None, reverse: 'bool' = False) -> 'Self'`
 
 Sorts `self` and `self.root()` in-place and returns `self`.
 
@@ -57,4 +57,4 @@ assert (by_bar_sorted.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4629-L4688)
+## [Source](../pstar/pstar.py#L4703-L4762)

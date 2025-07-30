@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__delslice__(self, i, j)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__delslice__(self, i: 'int', j: 'int') -> 'Self'`
 
 Delegates to [`__delitem__`](./pstar_plist___delitem__.md) whenever possible. For compatibility with python 2.7.
 
@@ -59,4 +59,4 @@ assert (pl.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2746-L2814)
+## [Source](../pstar/pstar.py#L2757-L2825)

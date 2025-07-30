@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__exit__(self, exc_type, exc_value, traceback)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__exit__(self, exc_type, exc_value, traceback) -> 'Self'`
 
 Allow the use of plists in `with` statements.
 
@@ -10,4 +10,4 @@ See `plist.__enter__`.
 
 
 
-## [Source](../pstar/pstar.py#L3124-L3133)
+## [Source](../pstar/pstar.py#L3193-L3202)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`unary_op(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`unary_op(self) -> 'plist'`
 
 [`plist`](./pstar_plist.md) unary operation; applied element-wise to `self`.
 
@@ -34,4 +34,4 @@ assert ((~by_bar.foo).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L1513-L1546)
+## [Source](../pstar/pstar.py#L1519-L1552)

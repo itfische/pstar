@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).`pset(iterable=(), /)`
+# [`pstar`](./pstar.md).`pset(set)`
 
 Placeholder `set` subclass. Mostly unimplemented.
 
@@ -33,8 +33,8 @@ See [`pstar`](./pstar_pstar.md) for more details on conversion.
 
 ## Methods and Properties:
 
-### [`pstar.pset.qj(self, *a, **kw)`](./pstar_pset_qj.md)
+### [`pstar.pset.qj(self, *a, **kw) -> 'Self'`](./pstar_pset_qj.md)
 
 Call the `qj` logging function with `self` as the value to be logged. All other arguments are passed through to `qj`.
 
-## [Source](../pstar/pstar.py#L989-L1044)
+## [Source](../pstar/pstar.py#L995-L1050)

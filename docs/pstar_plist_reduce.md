@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`reduce(self, func, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`reduce(self, func: 'Callable', *args, **kwargs) -> 'Self'`
 
 Apply a function repeatedly to its own result, returning a plist of length at most 1.
 
@@ -121,4 +121,4 @@ results, and is not recommended.
 
 
 
-## [Source](../pstar/pstar.py#L4270-L4430)
+## [Source](../pstar/pstar.py#L4344-L4504)

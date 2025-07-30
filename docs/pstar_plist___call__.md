@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__call__(self, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__call__(self, *args, **kwargs) -> 'Self'`
 
 Call each element of self, possibly recusively.
 
@@ -107,4 +107,4 @@ assert (by.format(foo=by._[:3:1]).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2818-L2953)
+## [Source](../pstar/pstar.py#L2829-L2964)

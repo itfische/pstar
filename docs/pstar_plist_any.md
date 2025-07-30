@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`any(self, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`any(self, *args, **kwargs) -> 'Self'`
 
 Returns `self` if `args[0]` evaluates to `True` for any elements of `self`.
 
@@ -40,4 +40,4 @@ assert (by_bar.foo.any_(lambda x: x > 1).nonempty().root().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4001-L4046)
+## [Source](../pstar/pstar.py#L4075-L4120)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pdepth(self, s=False)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pdepth(self, s: 'bool' = False) -> 'Self | int'`
 
 Returns a [`plist`](./pstar_plist.md) of the recursive depth of each leaf element, from 0.
 
@@ -53,4 +53,4 @@ assert (filtered.pdepth(True) == 2)
 
 
 
-## [Source](../pstar/pstar.py#L5083-L5143)
+## [Source](../pstar/pstar.py#L5157-L5217)

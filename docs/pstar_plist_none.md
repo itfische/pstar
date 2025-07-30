@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`none(self, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`none(self, *args, **kwargs) -> 'Self'`
 
 Returns `self` if `args[0]` evaluates to `False` for all elements of `self`.
 
@@ -40,4 +40,4 @@ assert (by_bar.foo.none_(lambda x: x > 1).nonempty().root().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4047-L4092)
+## [Source](../pstar/pstar.py#L4121-L4166)

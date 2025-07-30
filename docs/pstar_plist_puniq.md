@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`puniq(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`puniq(self) -> 'Self'`
 
 Returns a new [`plist`](./pstar_plist.md) with only a single element of each value in `self`.
 
@@ -89,4 +89,4 @@ any duplicates in the elements of `foo`, they would have been removed.
 
 
 
-## [Source](../pstar/pstar.py#L4893-L5002)
+## [Source](../pstar/pstar.py#L4967-L5076)

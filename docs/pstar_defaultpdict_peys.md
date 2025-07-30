@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`defaultpdict`](./pstar_defaultpdict.md).`peys(self)`
+# [`pstar`](./pstar.md).[`defaultpdict`](./pstar_defaultpdict.md).`peys(self) -> 'plist'`
 
 Get `self.keys()` as a sorted [`plist`](./pstar_plist.md).
 
@@ -22,4 +22,4 @@ assert (pd_str ==
 
 
 
-## [Source](../pstar/pstar.py#L761-L782)
+## [Source](../pstar/pstar.py#L767-L788)

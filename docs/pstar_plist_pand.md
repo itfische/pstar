@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pand(self, name='__plist_and_var__', call_pepth=0)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pand(self, name: 'str' = '__plist_and_var__', call_pepth: 'int' = 0) -> 'Self'`
 
 Stores `self` into a [`plist`](./pstar_plist.md) of `tuple`s that gets extended with each call.
 
@@ -91,4 +91,4 @@ shouldn't be used.
 
 
 
-## [Source](../pstar/pstar.py#L5655-L5768)
+## [Source](../pstar/pstar.py#L5732-L5848)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).`pstar(obj, cls_map=None, depth=-1, dbg=0)`
+# [`pstar`](./pstar.md).`pstar(obj: 'Any', cls_map: 'pdict | None' = None, depth: 'int' = -1, dbg: 'int | bool' = 0) -> 'Any'`
 
 Recursively converts between standard python types and pstar types.
 
@@ -239,12 +239,12 @@ This is convenient if you only imported as `from pstar import pstar`.
 
 ## Methods and Properties:
 
-### [`pstar.pstar.convert_to_pstar_types(other)`](./pstar_pstar_convert_to_pstar_types.md)
+### [`pstar.pstar.convert_to_pstar_types(other: 'Any') -> 'Any'`](./pstar_pstar_convert_to_pstar_types.md)
 
 Recursively convert `other` to [`pstar`](./pstar.md) types. The same as `pstar(other)` or `pstar * other`.
 
-### [`pstar.pstar.convert_to_python_types(other)`](./pstar_pstar_convert_to_python_types.md)
+### [`pstar.pstar.convert_to_python_types(other: 'Any') -> 'Any'`](./pstar_pstar_convert_to_python_types.md)
 
 Recursively convert `other` to python types. The same as `other / pstar`.
 
-## [Source](../pstar/pstar.py#L5863-L6159)
+## [Source](../pstar/pstar.py#L5943-L6239)

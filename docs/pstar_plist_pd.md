@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pd(self, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`pd(self, *args, **kwargs) -> 'PdDataFrameType'`
 
 Converts `self` into a `pandas.DataFrame`, forwarding passed args.
 
@@ -72,4 +72,4 @@ call `DataFrame.groupby`. Also see `plist.remix` for alternative ways of convert
 
 
 
-## [Source](../pstar/pstar.py#L3632-L3701)
+## [Source](../pstar/pstar.py#L3706-L3775)

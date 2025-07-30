@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`filter(self, func=<class 'bool'>, *args, **kwargs)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`filter(self, func: 'Callable' = <class 'bool'>, *args, **kwargs) -> 'Self'`
 
 Filter `self` by an arbitrary function on elements of `self`, forwarding arguments.
 
@@ -32,4 +32,4 @@ assert (foos.bin.filter(isinstance, str).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4431-L4459)
+## [Source](../pstar/pstar.py#L4505-L4533)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__delattr__(self, name)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`__delattr__(self, name: 'str') -> 'Self'`
 
 Deletes an attribute on elements of `self`.
 
@@ -32,4 +32,4 @@ assert (by_bar.aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L2589-L2623)
+## [Source](../pstar/pstar.py#L2600-L2634)

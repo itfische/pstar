@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`pstar`](./pstar_pstar.md).`convert_to_python_types(other)`
+# [`pstar`](./pstar.md).[`pstar`](./pstar_pstar.md).`convert_to_python_types(other: 'Any') -> 'Any'`
 
 Recursively convert `other` to python types. The same as `other / pstar`.
 
@@ -28,4 +28,4 @@ assert ([type(x['baz']) for x in data2] == [defaultdict, frozenset, set])
 
 
 
-## [Source](../pstar/pstar.py#L6130-L6159)
+## [Source](../pstar/pstar.py#L6210-L6239)

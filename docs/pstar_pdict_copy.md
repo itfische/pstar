@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`copy(self)`
+# [`pstar`](./pstar.md).[`pdict`](./pstar_pdict.md).`copy(self) -> 'Self'`
 
 Copy `self` to new [`defaultpdict`](./pstar_defaultpdict.md). Performs a shallow copy.
 
@@ -16,4 +16,4 @@ assert (pd2 is not pd1)
 
 
 
-## [Source](../pstar/pstar.py#L312-L327)
+## [Source](../pstar/pstar.py#L317-L332)

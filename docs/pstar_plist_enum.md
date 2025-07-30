@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`enum(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`enum(self) -> 'Self'`
 
 Wrap the current [`plist`](./pstar_plist.md) values in tuples where the first item is the index.
 
@@ -20,4 +20,4 @@ assert (by_bar.foo.enum_().aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L4563-L4582)
+## [Source](../pstar/pstar.py#L4637-L4656)

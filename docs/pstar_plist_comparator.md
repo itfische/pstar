@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`comparator(self, other, return_inds=False)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`comparator(self, other: 'Any', return_inds: 'bool' = False) -> 'plist'`
 
 [`plist`](./pstar_plist.md) comparison operator. **Comparisons filter plists.**
 
@@ -124,4 +124,4 @@ assert ((by_bar_foo == nonzero_by_bar_foo).nonempty(-1).aslist() ==
 
 
 
-## [Source](../pstar/pstar.py#L1131-L1284)
+## [Source](../pstar/pstar.py#L1137-L1290)

@@ -1,4 +1,4 @@
-# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`aspset(self)`
+# [`pstar`](./pstar.md).[`plist`](./pstar_plist.md).`aspset(self) -> 'pset | frozenpset'`
 
 Recursively convert all nested [`plist`](./pstar_plist.md)s from `self` to [`pset`](./pstar_pset.md)s, inclusive.
 
@@ -21,4 +21,4 @@ assert ([type(x) for x in by_bar.bar.aspset()] == [frozenpset, frozenpset])
 
 
 
-## [Source](../pstar/pstar.py#L3501-L3528)
+## [Source](../pstar/pstar.py#L3575-L3602)
